@@ -12,3 +12,5 @@ MIMIC_ED/
 ├── cleaned/
 │ └── mimicel_clean.csv
 └── README_data.txt
+```
+Once downloaded, place the MIMIC_ED folder in the project root directory so that relative paths in the notebooks work correctly.
