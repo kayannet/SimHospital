@@ -45,10 +45,6 @@ To reproduce results locally, create a new virtual environment and install depen
 ```bash
 pip install duckdb pandas matplotlib seaborn jupyter
 ```
-**Optional (for interactive visualization):**
-```bash
-pip install plotly
-```
 **Then launch Jupyter and open the notebook:**
 ```bash
 jupyter notebook notebooks/01_clean_mimic_ed.ipynb
