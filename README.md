@@ -13,7 +13,7 @@ By grounding the DES in de-identified MIMIC data first, we ensure that the workf
 Due to data-use agreements, the MIMIC-IV ED dataset cannot be hosted publicly.  
 You can download the complete data folder here:
 
-📁 [Download MIMIC_ED Folder](https://drive.google.com/drive/folders/your-folder-id?usp=share_link)
+📁 [Download MIMIC_ED Folder](https://drive.google.com/drive/folders/1R39eyLbLz9ccqoQCbLDfq12LXLs3ZFt9?usp=share_link)
 
 After downloading, the folder structure should look like this:
 ```
