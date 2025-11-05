@@ -53,7 +53,7 @@ jupyter notebook notebooks/01_clean_mimic_ed.ipynb
 
 <p style="font-size:16px; line-height:1.6;">
 <b>Nadine Orriss</b> — B.S. Data Science, UC San Diego (Class of 2026)<br>
-<b>Kayanne Tran</b> — B.S. Data Science, UC San Diego<br><br>
+<b>Kayanne Tran</b> — B.S. Data Science, UC San Diego (Class of 2026)<br><br>
 
 <b>Faculty Mentor:</b> Dr. Karandeep Singh, MD, MMSc — Joan and Irwin Jacobs Chancellor’s Endowed Chair in Digital Health Innovation; Associate Professor of Biomedical Informatics, UC San Diego; Chief Health AI Officer, UC San Diego Health<br>
 <b>Project Mentor:</b> Dr. Aaron Boussina — Assistant Professor of AI & Digital Health, UC San Diego Health
