@@ -73,4 +73,4 @@ jupyter notebook notebooks/01_clean_mimic_ed.ipynb
 </details>
 
 
-<p style="text-align:center; font-style:italic;"> Last updated November 2025 · SimHospital (Project 1) · UCSD Health AI Research Initiative </p>
+<p style="text-align:center; font-style:italic;"> Last updated November 2025 · SimHospital (Project 1)</p>
