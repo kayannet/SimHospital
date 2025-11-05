@@ -53,7 +53,7 @@ pip install plotly
 ```bash
 jupyter notebook notebooks/01_clean_mimic_ed.ipynb
 ```
-<h2 style="color:#4F81BD;">👩‍💻 Authors</h2>
+<h2 style="color:#4F81BD;">Authors</h2>
 
 <p style="font-size:16px; line-height:1.6;">
 <b>Nadine Orriss</b> — B.S. Data Science, UC San Diego (Class of 2026)<br>
@@ -62,6 +62,15 @@ jupyter notebook notebooks/01_clean_mimic_ed.ipynb
 <b>Faculty Mentor:</b> Dr. Karandeep Singh, MD, MMSc — Joan and Irwin Jacobs Chancellor’s Endowed Chair in Digital Health Innovation; Associate Professor of Biomedical Informatics, UC San Diego; Chief Health AI Officer, UC San Diego Health<br>
 <b>Project Mentor:</b> Dr. Aaron Boussina — Assistant Professor of AI & Digital Health, UC San Diego Health
 </p>
+
+<details>
+<summary><h2 style="color:#4F81BD;">Project Status</h2></summary>
+
+**Current Stage:** Data Cleaning & Metric Extraction (Phase 1)<br>
+**Next Steps:** Develop core DES model modules and validate against UCSD Health aggregates<br>
+**Goal:** Build a scalable, data-driven simulation framework for emergency and hospital-wide operations
+
+</details>
 
 
 <p style="text-align:center; font-style:italic;"> Last updated November 2025 · SimHospital (Project 1) · UCSD Health AI Research Initiative </p>
