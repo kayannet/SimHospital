@@ -32,7 +32,7 @@ Once downloaded, place the MIMIC_ED folder in the project root directory so that
 
 | Notebook | Description |
 |-----------|--------------|
-| `01_clean_mimic_ed.ipynb` | Cleans, inspects, and extracts key operational metrics (wait times, length of stay, arrival rates, and disposition ratios) from the MIMIC-IV ED dataset to parameterize the baseline DES model. |
+| [01_clean_mimic_ed.ipynb](notebooks/01_clean_mimic_ed.ipynb) | Cleans, inspects, and extracts key operational metrics (wait times, length of stay, arrival rates, and disposition ratios) from the MIMIC-IV ED dataset to parameterize the baseline DES model. |
 
 > Future notebooks (e.g., simulation modeling, validation, and scenario testing) will be added as the project progresses.
 
