@@ -15,7 +15,7 @@ You can download the complete data folder here:
 
 📁 [Download MIMIC_ED Folder](https://drive.google.com/drive/folders/1R39eyLbLz9ccqoQCbLDfq12LXLs3ZFt9?usp=share_link)
 
-After downloading, the folder structure should look like this:
+After downloading, the data folder structure should look like this:
 ```
 MIMIC_ED/
 ├── raw/
@@ -24,8 +24,20 @@ MIMIC_ED/
 │ └── mimicel_clean.csv
 └── README_data.txt
 ```
-Once downloaded, place the MIMIC_ED folder in the project root directory so that relative paths in the notebooks work correctly.
-
+Once downloaded, place the `MIMIC_ED` folder **one level outside** the project root directory so that relative paths in the notebooks work correctly. The directory folder should be as follows:
+```
+├── MIMIC_ED/                # <-- Contains all your data (NOT in the repo folder)
+│   ├── raw/
+│   │   └── mimicel.csv
+│   ├── cleaned/
+│   │   └── mimicel_clean.csv
+│   └── README_data.txt
+│
+└── SimHospital/        # <-- locally cloned GitHub repo
+    ├── notebooks/
+    │   └── 01_clean_mimic_ed.ipynb
+    └──  README.md
+```
 ---
 
 <h2 style="color:#4F81BD;">Notebook Overview</h2>
@@ -40,8 +52,10 @@ Once downloaded, place the MIMIC_ED folder in the project root directory so that
 
 <h2 style="color:#4F81BD;">Environment Setup</h2>
 
-To reproduce results locally, create a new virtual environment and install dependencies:
-
+To reproduce results locally, first clone this repository into your desired environment
+```bash
+git clone 
+```
 ```bash
 pip install duckdb pandas matplotlib seaborn jupyter
 ```
