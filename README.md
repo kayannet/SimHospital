@@ -52,14 +52,16 @@ Once downloaded, place the `MIMIC_ED` folder **one level outside** the project r
 
 <h2 style="color:#4F81BD;">Environment Setup</h2>
 
-To reproduce results locally, first clone this repository into your desired environment
+**To reproduce results locally, first clone this repository into your desired directory/environment**
 ```bash
-git clone 
+git clone https://github.com/your-username/SimHospital.git
+cd SimHospital
 ```
+**Then install the dependencies**
 ```bash
 pip install duckdb pandas matplotlib seaborn jupyter
 ```
-**Then launch Jupyter and open the notebook:**
+**Launch Jupyter and open the notebook:**
 ```bash
 jupyter notebook notebooks/01_clean_mimic_ed.ipynb
 ```
