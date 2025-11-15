@@ -43,10 +43,11 @@ Once downloaded, place the `MIMIC_ED` folder **one level outside** the project r
 <h2 style="color:#4F81BD;">Notebook Overview</h2>
 
 | Notebook | Description |
-|-----------|--------------|
-| [01_clean_mimic_ed.ipynb](notebooks/01_clean_mimic_ed.ipynb) | Cleans, inspects, and extracts key operational metrics (wait times, length of stay, arrival rates, and disposition ratios) from the MIMIC-IV ED dataset to parameterize the baseline DES model. |
+|----------|-------------|
+| [01_clean_mimic_ed.ipynb](notebooks/01_clean_mimic_ed.ipynb) | Loads the raw MIMIC-IV ED extract, inspects the schema, and produces a cleaned encounter-level table (`mimicel_clean.csv`) with one row per ED stay and standardized arrival/triage/depart timestamps. This dataset is the basis for estimating arrival rates, door-to-triage times, and length-of-stay distributions for the baseline DES model. |
+| [02_activity_sequence_analysis.ipynb](notebooks/02_activity_sequence_analysis.ipynb) | Uses a 5% patient sample to explore ED activity sequences. Deduplicates the activity log, builds an interactive patient-journey lookup tool, and computes transition probabilities and mean inter-activity times between key ED steps (Enter ED → Triage → Vital signs → Med reconciliation/dispensations → Discharge). |
+| [03_build_sim_input_tables.ipynb](notebooks/03_build_sim_input_tables.ipynb) *(planned)* | Reshapes the cleaned activity log into four analysis-ready datasets—`stays`, `activity_log`, `diagnoses`, and `medications`—and saves them as mini-CSV tables. These four datasets will be the direct inputs to the discrete-event simulation model. |
 
-> Future notebooks (e.g., simulation modeling, validation, and scenario testing) will be added as the project progresses.
 
 ---
 
