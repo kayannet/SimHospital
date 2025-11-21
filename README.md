@@ -11,32 +11,31 @@ By grounding the DES in de-identified MIMIC data first, we ensure that the workf
 <h2 style="color:#4F81BD;">Data Access</h2>
 
 Due to data-use agreements, the MIMIC-IV ED dataset cannot be hosted publicly.  
-You can download the complete data folder here:
+You can download the complete data folder here, but it also already exists in the `data/raw` folder:
 
 📁 [Download MIMIC_ED Folder](https://drive.google.com/drive/folders/1R39eyLbLz9ccqoQCbLDfq12LXLs3ZFt9?usp=share_link)
 
-After downloading, the data folder structure should look like this:
+
+<h2 style="color:#4F81BD;">Folder Structure</h2>
+
 ```
-MIMIC_ED/
-├── raw/
-│ └── mimicel.csv
-├── cleaned/
-│ └── mimicel_clean.csv
-└── README_data.txt
-```
-Once downloaded, place the `MIMIC_ED` folder **one level outside** the project root directory so that relative paths in the notebooks work correctly. The directory folder should be as follows:
-```
-├── MIMIC_ED/                # <-- Contains all your data (NOT in the repo folder)
-│   ├── raw/
-│   │   └── mimicel.csv
-│   ├── cleaned/
-│   │   └── mimicel_clean.csv
-│   └── README_data.txt
+SimHospital
+|
+├── data/                    <-- Contains all data, as well as cleaned/transformed dataframes
+│   ├── raw
+│   │   └── mimicel.csv      <-- Raw data 
+│   ├── cleaned              <-- Lightly cleaned data 
+│   └── processed            <-- Final transformed/engineered datasets
 │
-└── SimHospital/        # <-- locally cloned GitHub repo
-    ├── notebooks/
-    │   └── 01_clean_mimic_ed.ipynb
-    └──  README.md
+├── src                      <-- Main source folder
+│   ├── notebooks            <-- Python notebooks (EDA, visualizations, modeling)
+│   └── r_script             <-- R scripts (DES, simulation, modeling)
+|
+├── results                  <-- Outputs (plots, tables, metrics)
+|
+├── requirements.txt     
+└── README.md
+  
 ```
 ---
 
@@ -44,9 +43,9 @@ Once downloaded, place the `MIMIC_ED` folder **one level outside** the project r
 
 | Notebook | Description |
 |----------|-------------|
-| [01_clean_mimic_ed.ipynb](notebooks/01_clean_mimic_ed.ipynb) | Loads the raw MIMIC-IV ED extract, inspects the schema, and produces a cleaned encounter-level table (`mimicel_clean.csv`) with one row per ED stay and standardized arrival/triage/depart timestamps. This dataset is the basis for estimating arrival rates, door-to-triage times, and length-of-stay distributions for the baseline DES model. |
-| [02_activity_sequence_analysis.ipynb](notebooks/02_activity_sequence_analysis.ipynb) | Uses a 5% patient sample to explore ED activity sequences. Deduplicates the activity log, builds an interactive patient-journey lookup tool, and computes transition probabilities and mean inter-activity times between key ED steps (Enter ED → Triage → Vital signs → Med reconciliation/dispensations → Discharge). |
-| [03_build_sim_input_tables.ipynb](notebooks/03_build_sim_input_tables.ipynb) | Processes and normalizes the cleaned activity log into four analysis-ready datasets—`ed_stays`, `ed_activity_log`, `ed_diagnoses`, and `ed_medications`—and saves them as CSV files. Includes data quality validation, deduplication, and standardization. These four datasets are the direct inputs to the discrete-event simulation model. |
+| [01_clean_mimic_ed.ipynb](src/notebooks/01_clean_mimic_ed.ipynb) | Loads the raw MIMIC-IV ED extract, inspects the schema, and produces a cleaned encounter-level table (`mimicel_clean.csv`) with one row per ED stay and standardized arrival/triage/depart timestamps. This dataset is the basis for estimating arrival rates, door-to-triage times, and length-of-stay distributions for the baseline DES model. |
+| [02_activity_sequence_analysis.ipynb](src/notebooks/02_activity_sequence_analysis.ipynb) | Uses a 5% patient sample to explore ED activity sequences. Deduplicates the activity log, builds an interactive patient-journey lookup tool, and computes transition probabilities and mean inter-activity times between key ED steps (Enter ED → Triage → Vital signs → Med reconciliation/dispensations → Discharge). |
+| [03_build_sim_input_tables.ipynb](src/notebooks/03_build_sim_input_tables.ipynb) | Processes and normalizes the cleaned activity log into four analysis-ready datasets—`ed_stays`, `ed_activity_log`, `ed_diagnoses`, and `ed_medications`—and saves them as CSV files. Includes data quality validation, deduplication, and standardization. These four datasets are the direct inputs to the discrete-event simulation model. |
 
 
 ---
@@ -58,13 +57,13 @@ Once downloaded, place the `MIMIC_ED` folder **one level outside** the project r
 git clone https://github.com/your-username/SimHospital.git
 cd SimHospital
 ```
-**Then install the dependencies**
+**Then install the dependencies from `requirements.txt`**
 ```bash
-pip install duckdb pandas matplotlib seaborn jupyter
+pip install -r requirements.txt
 ```
 **Launch Jupyter and open the notebook:**
 ```bash
-jupyter notebook notebooks/01_clean_mimic_ed.ipynb
+jupyter notebook src/notebooks/01_clean_mimic_ed.ipynb
 ```
 <h2 style="color:#4F81BD;">Authors</h2>
 
