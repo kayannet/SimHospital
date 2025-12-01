@@ -40,13 +40,13 @@ Due to data-use agreements, the MIMIC-IV ED dataset cannot be hosted publicly. T
 
 <h2 style="color:#4F81BD;">Notebook Overview</h2>
 
-| Notebook | Description |
-|----------|-------------|
-| [01_clean_mimic_ed.ipynb](src/notebooks/01_clean_mimic_ed.ipynb) | Loads the raw MIMIC-IV ED extract, inspects the schema, and produces a cleaned encounter-level table (`mimicel_clean.csv`) with one row per ED stay and standardized arrival/triage/depart timestamps. This dataset is the basis for estimating arrival rates, door-to-triage times, and length-of-stay distributions for the baseline DES model. |
-| [02_activity_sequence_analysis.ipynb](src/notebooks/02_activity_sequence_analysis.ipynb) | Uses a 5% patient sample to explore ED activity sequences. Deduplicates the activity log, builds an interactive patient-journey lookup tool, and computes transition probabilities and mean inter-activity times between key ED steps (Enter ED → Triage → Vital signs → Med reconciliation/dispensations → Discharge). |
-| [03_build_sim_input_tables.ipynb](src/notebooks/03_build_sim_input_tables.ipynb) | Processes and normalizes the cleaned activity log into four analysis-ready datasets—`ed_stays`, `ed_activity_log`, `ed_diagnoses`, and `ed_medications`—and saves them as CSV files. Includes data quality validation, deduplication, and standardization. These four datasets are the direct inputs to the discrete-event simulation model. |
-| [04_training_df_aggregates.ipynb](src/notebooks/04_training_df_aggregates.ipynb) | Aggregates and prepares the cleaned ED datasets into a training dataframe for modeling in R. Includes summary statistics, probability aggregates, and visualizations that inform simulation branching logic. |
-| [hospital_sim_v1.ipynb](src/notebooks/hospital_sim_v1.ipynb)|R notebook implementing a simple ED simulation: patients arrive, length-of-stay (LOS) is sampled from ed_stays.csv, and admitted patients’ LOS is predicted using the R model.|
+| Notebook | Language | Description |
+|----------|-------------|-------------|
+| [01_clean_mimic_ed.ipynb](src/notebooks/01_clean_mimic_ed.ipynb) | Python | Loads the raw MIMIC-IV ED extract, inspects the schema, and produces a cleaned encounter-level table (`mimicel_clean.csv`) with one row per ED stay and standardized arrival/triage/depart timestamps. This dataset is the basis for estimating arrival rates, door-to-triage times, and length-of-stay distributions for the baseline DES model. |
+| [02_activity_sequence_analysis.ipynb](src/notebooks/02_activity_sequence_analysis.ipynb) | Python|  Uses a 5% patient sample to explore ED activity sequences. Deduplicates the activity log, builds an interactive patient-journey lookup tool, and computes transition probabilities and mean inter-activity times between key ED steps (Enter ED → Triage → Vital signs → Med reconciliation/dispensations → Discharge). |
+| [03_build_sim_input_tables.ipynb](src/notebooks/03_build_sim_input_tables.ipynb) | Python| Processes and normalizes the cleaned activity log into four analysis-ready datasets—`ed_stays`, `ed_activity_log`, `ed_diagnoses`, and `ed_medications`—and saves them as CSV files. Includes data quality validation, deduplication, and standardization. These four datasets are the direct inputs to the discrete-event simulation model. |
+| [04_training_df_aggregates.ipynb](src/notebooks/04_training_df_aggregates.ipynb) | Python| Aggregates and prepares the cleaned ED datasets into a training dataframe for modeling in R. Includes summary statistics, probability aggregates, and visualizations that inform simulation branching logic. |
+| [hospital_sim_v1.ipynb](src/notebooks/hospital_sim_v1.ipynb)| R| Implements a baseline ED simulation: patients arrive, length-of-stay (LOS) is sampled from ed_stays.csv, and admitted patients’ LOS is predicted using the R model.|
 
 
 
