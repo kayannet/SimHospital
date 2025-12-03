@@ -1,10 +1,29 @@
-<h1 style="text-align:center; color:#4F81BD;">🏥 SimHospital (Project 1): Parameterizing an Emergency Department DES Using MIMIC-IV Data</h1>
+<h1 style="text-align:center; color:#4F81BD;">🏥 SimHospital Phase 1: ED Capacity Estimation & Hospital LOS Prediction</h1>
 
-This project represents **Phase 1** of *SimHospital*, a multi-stage initiative to build a hospital-scale **Discrete-Event Simulation (DES)** framework for patient flow modeling and operational decision support.  
-The current phase focuses on developing a **data-driven baseline model** of an Emergency Department (ED) using the publicly available **MIMIC-IV ED dataset**.  
-This baseline model provides empirical parameters—such as wait times, length of stay, arrival patterns, and disposition ratios—that will later be used to calibrate and validate the hospital-level simulator with UCSD Health aggregate data.
+This project represents **Phase 1** of *SimHospital*, a multi-stage initiative to develop data-driven tools for hospital operational planning and patient flow optimization using **Discrete-Event Simulation (DES)**.
 
-By grounding the DES in de-identified MIMIC data first, we ensure that the workflow is **reproducible, ethically compliant, and generalizable** before scaling to institutional data access at UC San Diego Health.
+The current phase has two primary objectives:
+
+1. **Estimate Emergency Department bed capacity** using discrete event simulation with empirical MIMIC-IV data
+2. **Predict hospital length of stay** for admitted patients to support future transfer decision logic
+
+By leveraging the publicly available **MIMIC-IV Emergency Department dataset** (425,028 visits from Beth Israel Deaconess Medical Center, 2008-2019), we establish a reproducible, data-driven baseline before scaling to institutional data at UC San Diego Health in Phase 2.
+
+---
+
+<h2 style="color:#4F81BD;">Phase 1 Deliverables</h2>
+
+**Emergency Department Simulator**
+- Built discrete event simulation using R/simmer package with empirical MIMIC-IV parameters
+- **Key Finding**: Estimated Beth Israel ED requires **54-60 beds** under baseline conditions
+- Validated capacity through constrained simulation runs (mean utilization: 53%, peak: 90%)
+- Addressed privacy-shifted timestamps using aggregate arrival rate calculation (~106 patients/day)
+
+**Hospital LOS Prediction Model** 
+- Trained XGBoost model to predict hospital length of stay for admitted patients
+- Features: patient acuity, demographics, ED LOS, medication count
+- Model demonstrates clinically appropriate relationships (sicker patients → longer predicted stays)
+- Establishes framework for Phase 2 transfer decision criteria (>80th percentile → Hospital 2)
 
 ---
 
