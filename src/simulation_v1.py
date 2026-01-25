@@ -192,7 +192,7 @@ def _(collapsed_library):
         for encounter_id, path in collapsed_library.items()
     }
     acuity_flags
-    return
+    return (acuity_flags,)
 
 
 @app.cell
@@ -210,16 +210,27 @@ def _(mo):
 
 @app.class_definition
 class g:
-    ed_bed_cap = 999 # The number of ED beds
-    inpatient_bed_cap = 999
-    icu_bed_cap = 999
+    # H1
+    ed_bed_cap = 60 # The number of ED beds
+    inpatient_bed_cap = 250
+    icu_bed_cap = 40
 
+    # H2 (% of H1 inpatient)
+    h2_inpatient_bed_cap = inpatient_bed_cap * 0.3
 
-    trauma_treat_mean = 40 # Mean of the trauma cubicle treatment distribution (Lognormal)
-    trauma_treat_var = 5 # Variance of the trauma cubicle treatment distribution (Lognormal)
+    # H3  (% of H1 inpatient)
+    h3_inpatient_bed_cap =  inpatient_bed_cap * 0.3
 
     # Arrival rate (placeholder, used Karandeep's code ~3.33 patients per hour)
     arrival_rate = 0.15
+
+
+    # transfer prob
+    deteriation_rate = 0.05
+    deterioration_transfer_prob = 0.95
+
+    overflow_transfer_prob = 0.5
+    
 
     # Simulation running parameters
     sim_duration = 168 # The number of time units the simulation will run for
@@ -229,29 +240,56 @@ class g:
     audit_interval = 1
 
 
-@app.class_definition
-class Patient:
-    def __init__(self, p_id, encounter_id, path):
-        self.identifier = p_id
-        # Real-world identifier
-        self.encounter_id = encounter_id  # formerly transfer_id
-        # Patient journey: list of (location, duration)
-        self.path = path  
-        # Outcomes
-        self.arrival = None
-        self.total_time = None
-        self.ed_wait_times = []           # Changed from 0.0 to [], it is appending and can't append float it needs to be list
-        self.icu_wait_times = []          # Changed from 0.0 to []
-        self.inpatient_wait_times = []    # Changed from 0.0 to []
-        self.ed_service_times = []        # Changed from 0.0 to []
-        self.icu_service_times = []       # Changed from 0.0 to []
-        self.inpatient_service_times = []
+@app.cell
+def _(random):
+    class Patient:
+        def __init__(self, p_id, encounter_id, path, ever_icu):
+            self.identifier = p_id
+            # Real-world identifier
+            self.encounter_id = encounter_id  # formerly transfer_id
+            # Patient journey: list of (location, duration)
+            self.path = path  
+            # Outcomes
+            self.arrival = None
+            self.total_time = None
+            self.ed_wait_times = []           # Changed from 0.0 to [], it is appending and can't append float it needs to be list
+            self.icu_wait_times = []          # Changed from 0.0 to []
+            self.inpatient_wait_times = []    # Changed from 0.0 to []
+            self.ed_service_times = []        # Changed from 0.0 to []
+            self.icu_service_times = []       # Changed from 0.0 to []
+            self.inpatient_service_times = []
+
+            # NEW!
+
+            # logging lists for h2 and h3
+            self.h2_inpatient_wait_times = []    # Changed from 0.0 to []
+            self.h2_inpatient_service_times = []
+
+            self.h3_inpatient_wait_times = []    # Changed from 0.0 to []
+            self.h3_inpatient_service_times = []
+
+        
+            self.ever_icu = ever_icu
+            # can be assigned in assign_initial_hosp
+            self.assigned_hospital = "H1" if self.ever_icu else random.choice(["H2", "H3"]) 
+        
+            # list of hospitals they've ever been to
+            self.transfer_list = []
+
+
+            # transfer logic
+            self.transfer_to_h1 = False       # For non-ICU patient deterioration
+            self.transfer_to_h2 = False       # Optional, e.g., overflow logic
+            self.transfer_to_h3 = False       # Optional, e.g., overflow logic
+
+        
+    return (Patient,)
 
 
 @app.cell
-def _(EventLogger, Exponential, VidigiStore, pd, random, simpy):
+def _(EventLogger, Exponential, Patient, VidigiStore, pd, random, simpy):
     class Model:
-        def __init__(self, run_number, df):
+        def __init__(self, run_number, df, acuity_flags):
             # Create a SimPy environment in which everything will live
             self.env = simpy.Environment()
 
@@ -289,6 +327,10 @@ def _(EventLogger, Exponential, VidigiStore, pd, random, simpy):
                 run_number=self.run_number
             )
 
+            self.acuity_flags = acuity_flags
+
+    
+
             # new pandas df that will store results against patient ID
             self.results_df = pd.DataFrame()
             self.results_df['Patient ID'] = [1]
@@ -298,19 +340,36 @@ def _(EventLogger, Exponential, VidigiStore, pd, random, simpy):
             self.results_df['Time in ICU'] = [0.0]
             self.results_df['Q Time INPATIENT'] = [0.0]
             self.results_df['Time in INPATIENT'] = [0.0]
+
+            # adding results col for h2 and h3 resource
+            self.results_df['Q Time H2 INPATIENT'] = [0.0]
+            self.results_df['Time in H2 INPATIENT'] = [0.0]
+            self.results_df['Q Time H3 INPATIENT'] = [0.0]
+            self.results_df['Time in H3 INPATIENT'] = [0.0]
+        
             self.results_df.set_index('Patient ID', inplace = True)
 
             self.mean_q_time_ed = 0
             self.mean_q_time_icu = 0
             self.mean_q_time_inpatient = 0
 
+            # mean times for h2 and h3
+            self.mean_q_time_h2_inpatient = 0
+            self.mean_q_time_h3_inpatient = 0
+
+
             self.utilization_audit = []
 
             # need to add these for utilization plot 
-
             self.ed_utilization = []
             self.icu_utilization = []
             self.inpatient_utilization = []
+
+            # H2 and H3 inpatient util
+            self.h2_inpatient_utilization = []
+            self.h3_inpatient_utilization = []
+
+
 
         def init_resources(self):
             '''
@@ -326,16 +385,33 @@ def _(EventLogger, Exponential, VidigiStore, pd, random, simpy):
             # with vidigi
             self.ed_beds = VidigiStore( 
                 self.env, 
-                num_resources=g.ed_bed_cap 
+                num_resources=g.ed_bed_cap, 
+                capacity = g.ed_bed_cap
                 ) 
             self.icu_beds = VidigiStore( 
                 self.env, 
-                num_resources=g.icu_bed_cap 
+                num_resources=g.icu_bed_cap, 
+                capacity = g.icu_bed_cap
                 ) 
             self.inpatient_beds = VidigiStore( 
                 self.env, 
-                num_resources=g.inpatient_bed_cap 
+                num_resources=g.inpatient_bed_cap, 
+                capacity = g.inpatient_bed_cap
                 ) 
+
+            # adding resource for h2 and h3
+            self.h2_inpatient_beds = VidigiStore( 
+                self.env, 
+                num_resources=g.h2_inpatient_bed_cap, 
+                capacity = g.h2_inpatient_bed_cap
+                )  
+        
+
+            self.h3_inpatient_beds = VidigiStore( 
+                self.env, 
+                num_resources=g.h3_inpatient_bed_cap, 
+                capacity = g.h3_inpatient_bed_cap
+                )  
 
 
 
@@ -356,8 +432,9 @@ def _(EventLogger, Exponential, VidigiStore, pd, random, simpy):
                 p = Patient(
                     p_id=self.patient_counter,
                     encounter_id=encounter_id,
-                    path=path
-                )
+                    path=path,
+                    ever_icu = self.acuity_flags[encounter_id], # track if this patient has ever been to icu from MIMIC collapsed lib
+                ) 
 
                 self.patient_objects.append(p)
 
@@ -379,6 +456,12 @@ def _(EventLogger, Exponential, VidigiStore, pd, random, simpy):
                 # you like - just make sure you're consistent within the model
                 yield self.env.timeout(sampled_inter)
 
+    
+        def assign_initial_hospital(self,):
+
+            # TO BE DEFINED
+            return
+
         def patient_journey(self, patient):
 
             patient.arrival = self.env.now
@@ -386,7 +469,7 @@ def _(EventLogger, Exponential, VidigiStore, pd, random, simpy):
 
            # Map location to resource pool and patient attributes
             resource_map = {
-                'ED': (self.ed_beds, 
+                'ED': (self. ed_beds, 
                         'ed_wait_times', 
                         'ed_service_times', 
                         self.ed_utilization, 
@@ -400,15 +483,25 @@ def _(EventLogger, Exponential, VidigiStore, pd, random, simpy):
                         self.results_df['Q Time ICU'], 
                         self.results_df['Time in ICU'],
                        ),
-                'INPATIENT': (self.inpatient_beds, 
-                              'inpatient_wait_times',
-                              'inpatient_service_times', 
-                              self.inpatient_utilization,
-                              self.results_df['Q Time INPATIENT'],
-                              self.results_df['Time in INPATIENT'],
+
+                'INPATIENT': (self.h2_inpatient_beds, 
+                              'h2_inpatient_wait_times',
+                              'h2_inpatient_service_times', 
+                              self.h2_inpatient_utilization,
+                              self.results_df['Q Time H2 INPATIENT'],
+                              self.results_df['Time in H2 INPATIENT'],
                              ),
+
+                'H2_INPATIENT': (self.h3_inpatient_beds, 
+                              'h3_inpatient_wait_times',
+                              'h3_inpatient_service_times', 
+                              self.h3_inpatient_utilization,
+                              self.results_df['Q Time H3 INPATIENT'],
+                              self.results_df['Time in H3 INPATIENT'],
+                             ), 
             }
 
+            # need to restructure this to not follow the path directly, based on transfer probs
             for location, duration in patient.path:
                 # If location is a resource, get pool and patient attribute names
                 if location in resource_map:
@@ -421,8 +514,16 @@ def _(EventLogger, Exponential, VidigiStore, pd, random, simpy):
 
                     with resource_pool.request() as req:
                         bed = yield req
+                    
+                        # debug print
+                        # in_use = resource_pool.capacity - len(resource_pool.items)
+                        # available = len(resource_pool.items)
+                        # print(f"[t={self.env.now}] {location} in use: {in_use}, available: {available}")
+
                         wait_time = self.env.now - start_wait
                         getattr(patient, wait_attr).append(wait_time)
+
+                    
 
                         self.logger.log_resource_use_start(
                             entity_id=patient.identifier,
@@ -434,14 +535,17 @@ def _(EventLogger, Exponential, VidigiStore, pd, random, simpy):
                         yield self.env.timeout(duration)
                         getattr(patient, service_attr).append(duration)
 
+                        # 
+                        # yield resource_pool.put(bed)
+
+
                         self.logger.log_resource_use_end(
                             entity_id=patient.identifier,
                             event_type = 'resource_use_end',
                             event=f"{location}_ends",
                             resource_id=bed.id_attribute
                         )
-
-
+                    
 
                 else:
                     # Non-resource activity
@@ -475,6 +579,15 @@ def _(EventLogger, Exponential, VidigiStore, pd, random, simpy):
                     # So utilization = capacity - current items available
 
                     current_items = len(resource_obj.items) if hasattr(resource_obj, 'items') else 0
+                
+                    # DEBUG PRINTS
+                    # if r["resource_name"] == "ED":
+                    #     print(f"[t={self.env.now}] ED items:", len(self. ed_beds.items))
+                    # if r["resource_name"] == "ICU":
+                    #     print(f"[t={self.env.now}] ICU items:", len(self. icu_beds.items))
+                    # if r["resource_name"] == "INPATIENT":
+                    #     print(f"[t={self.env.now}] INPATIENT items:", len(self. inpatient_beds.items))
+
 
                     self.utilization_audit.append({
                         'resource_name': r["resource_name"],
@@ -496,9 +609,9 @@ def _(EventLogger, Exponential, VidigiStore, pd, random, simpy):
             self.env.process(
                             self.interval_audit_utilization(
                                 resources=[
-                                    {"resource_name": "ED", "resource_object": self.ed_beds},
-                                    {"resource_name": "ICU", "resource_object": self.icu_beds},
-                                    {"resource_name": "INPATIENT", "resource_object": self.inpatient_beds},
+                                    {"resource_name": "ED", "resource_object": self. ed_beds},
+                                    {"resource_name": "ICU", "resource_object": self. icu_beds},
+                                    {"resource_name": "INPATIENT", "resource_object": self. inpatient_beds},
                                 ],
                                 interval=g.audit_interval
                             )
@@ -511,8 +624,9 @@ def _(EventLogger, Exponential, VidigiStore, pd, random, simpy):
 @app.cell
 def _(Model, np, pd):
     class Trial:
-        def __init__(self, df):
+        def __init__(self, df, acuity_flags):
             self.patient_library = df
+            self.acuity_flags = acuity_flags
             self.df_trial_results = pd.DataFrame(columns=[
                 "Mean Queue Time ED",
                 "Mean Service Time ED",
@@ -527,7 +641,7 @@ def _(Model, np, pd):
 
         def run_trial(self):
             for run in range(1, g.number_of_runs + 1):
-                my_model = Model(run, self.patient_library)
+                my_model = Model(run, self.patient_library, self.acuity_flags)
                 my_model.run()
 
                 # Compute mean waits
@@ -566,8 +680,8 @@ def _(Model, np, pd):
 
 
 @app.cell
-def _(Trial, collapsed_library):
-    my_trial = Trial(collapsed_library)
+def _(Trial, acuity_flags, collapsed_library):
+    my_trial = Trial(collapsed_library, acuity_flags)
 
     my_trial.run_trial()
     return (my_trial,)
@@ -640,7 +754,7 @@ def _(animate_activity_log, event_position_df, my_trial):
             # gap be between these rows?
             gap_between_queue_rows=25,
             # How tall, in pixels, should the plotly plot be?
-            plotly_height=600,
+            plotly_height=800,
             # How wide, in pixels, should the plotly plot be?
             plotly_width=1000,
             # How long, in milliseconds, should each frame last?
@@ -648,9 +762,9 @@ def _(animate_activity_log, event_position_df, my_trial):
             # How long, in milliseconds, should the transition between each pair of frames be?
             frame_transition_duration=600,
             # How wide, in coordinates, should our plot's internal coordinate system be?
-            override_x_max=1000,
+            # override_x_max=1000,
             # How tall, in coordinates, should our plot's internal coordinate system be?
-            override_y_max=500,
+            # override_y_max=500,
             # How long should a queue be before it starts wrapping vertically?
             wrap_queues_at=25,
             # What are the maximum numbers of entities that should be displayed in any queueing steps
@@ -666,18 +780,24 @@ def _(animate_activity_log, event_position_df, my_trial):
 
 
 @app.cell
-def _(plt, single_run_event_log_df):
+def _(pd, plt, single_run_event_log_df):
     def compute_usage(df, resource):
-        events = df[df["event"].str.contains(f"{resource}_")].copy()
-
-        events["delta"] = events["event"].apply(
-            lambda x: 1 if x.endswith("begins") else -1
-        )
-
+        events = df[(df["event"].str.contains(f"{resource}_begins")) | 
+                    (df["event"].str.contains(f"{resource}_ends"))].copy()
+    
         events = events.sort_values("time")
-        events["in_use"] = events["delta"].cumsum()
+    
+        in_use = 0
+        usage = []
+        for _, row in events.iterrows():
+            if row["event"].endswith("begins"):
+                in_use += 1
+            else:
+                in_use -= 1
+            usage.append((row["time"], in_use))
+    
+        return pd.DataFrame(usage, columns=["time", "in_use"])
 
-        return events[["time", "in_use"]]
 
     ed_usage = compute_usage(single_run_event_log_df, "ED")
     icu_usage = compute_usage(single_run_event_log_df, "ICU")
@@ -698,7 +818,42 @@ def _(plt, single_run_event_log_df):
 
 
 @app.cell
-def _():
+def _(single_run_event_log_df):
+    def compute_max_beds(df, resource):
+        """
+        Compute the maximum concurrent patients for a given resource.
+    
+        df: event log dataframe with columns 'time' and 'event'
+        resource: string, e.g., 'ED', 'ICU', 'INPATIENT'
+        """
+        # Filter for begins/ends events for this resource
+        events = df[(df["event"].str.contains(f"{resource}_begins")) |
+                    (df["event"].str.contains(f"{resource}_ends"))].copy()
+    
+        # Sort by time
+        events = events.sort_values("time")
+    
+        in_use = 0
+        max_in_use = 0
+        for _, row in events.iterrows():
+            if row["event"].endswith("begins"):
+                in_use += 1
+            else:
+                in_use -= 1
+            if in_use > max_in_use:
+                max_in_use = in_use
+    
+        return max_in_use
+
+    # Example usage
+    ed_max = compute_max_beds(single_run_event_log_df, "ED")
+    icu_max = compute_max_beds(single_run_event_log_df, "ICU")
+    inp_max = compute_max_beds(single_run_event_log_df, "INPATIENT")
+
+    print(f"Realistic ED bed capacity: {ed_max}")
+    print(f"Realistic ICU bed capacity: {icu_max}")
+    print(f"Realistic Inpatient bed capacity: {inp_max}")
+
     return
 
 
