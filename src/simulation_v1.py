@@ -216,10 +216,10 @@ class g:
     icu_bed_cap = 40
 
     # H2 (% of H1 inpatient)
-    h2_inpatient_bed_cap = inpatient_bed_cap * 0.3
+    h2_inpatient_bed_cap = int(inpatient_bed_cap * 0.3)
 
     # H3  (% of H1 inpatient)
-    h3_inpatient_bed_cap =  inpatient_bed_cap * 0.3
+    h3_inpatient_bed_cap =  int(inpatient_bed_cap * 0.3)
 
     # Arrival rate (placeholder, used Karandeep's code ~3.33 patients per hour)
     arrival_rate = 0.15
@@ -402,7 +402,7 @@ def _(EventLogger, Exponential, Patient, VidigiStore, pd, random, simpy):
             # adding resource for h2 and h3
             self.h2_inpatient_beds = VidigiStore( 
                 self.env, 
-                num_resources=g.h2_inpatient_bed_cap, 
+                num_resources= g.h2_inpatient_bed_cap, 
                 capacity = g.h2_inpatient_bed_cap
                 )  
         
@@ -456,14 +456,16 @@ def _(EventLogger, Exponential, Patient, VidigiStore, pd, random, simpy):
                 # you like - just make sure you're consistent within the model
                 yield self.env.timeout(sampled_inter)
 
-    
-        def assign_initial_hospital(self,):
 
-            # TO BE DEFINED
-            return
+        # quickly defined, can be changed however
+        def assign_initial_hospital(self, patient):
+            if patient.ever_icu:
+                patient.assigned_hospital = "H1"
+            else:
+                patient.assigned_hospital = random.choice(["H2_INPATIENT", "H3_INPATIENT"])
+
 
         def patient_journey(self, patient):
-
             patient.arrival = self.env.now
             self.logger.log_arrival(entity_id=patient.identifier)
 
@@ -484,15 +486,22 @@ def _(EventLogger, Exponential, Patient, VidigiStore, pd, random, simpy):
                         self.results_df['Time in ICU'],
                        ),
 
-                'INPATIENT': (self.h2_inpatient_beds, 
+                'INPATIENT': (self.inpatient_beds, 
+                              'inpatient_wait_times',
+                              'inpatient_service_times', 
+                              self.inpatient_utilization,
+                              self.results_df['Q Time INPATIENT'],
+                              self.results_df['Time in INPATIENT'],
+                             ),
+
+                'H2_INPATIENT': (self.h2_inpatient_beds, 
                               'h2_inpatient_wait_times',
                               'h2_inpatient_service_times', 
                               self.h2_inpatient_utilization,
                               self.results_df['Q Time H2 INPATIENT'],
                               self.results_df['Time in H2 INPATIENT'],
-                             ),
-
-                'H2_INPATIENT': (self.h3_inpatient_beds, 
+                             ), 
+                'H3_INPATIENT': (self.h3_inpatient_beds, 
                               'h3_inpatient_wait_times',
                               'h3_inpatient_service_times', 
                               self.h3_inpatient_utilization,
@@ -534,10 +543,6 @@ def _(EventLogger, Exponential, Patient, VidigiStore, pd, random, simpy):
 
                         yield self.env.timeout(duration)
                         getattr(patient, service_attr).append(duration)
-
-                        # 
-                        # yield resource_pool.put(bed)
-
 
                         self.logger.log_resource_use_end(
                             entity_id=patient.identifier,
@@ -611,7 +616,10 @@ def _(EventLogger, Exponential, Patient, VidigiStore, pd, random, simpy):
                                 resources=[
                                     {"resource_name": "ED", "resource_object": self. ed_beds},
                                     {"resource_name": "ICU", "resource_object": self. icu_beds},
-                                    {"resource_name": "INPATIENT", "resource_object": self. inpatient_beds},
+                                    {"resource_name": "INPATIENT", "resource_object": self.inpatient_beds},
+                                    {"resource_name": "H2_INPATIENT", "resource_object": self.h2_inpatient_beds},
+                                    {"resource_name": "H3_INPATIENT", "resource_object": self.h3_inpatient_beds},
+                                
                                 ],
                                 interval=g.audit_interval
                             )
@@ -634,6 +642,10 @@ def _(Model, np, pd):
                 "Mean Service Time ICU",
                 "Mean Queue Time Inpatient",
                 "Mean Service Time Inpatient",
+                # "Mean Queue Time H2 Inpatient", 
+                # "Mean Service Time H2 Inpatient", 
+                # "Mean Queue Time H3 Inpatient", 
+                # "Mean Service Time H3 Inpatient", 
                 "Mean Total Time"
             ])
             self.all_event_logs = [] 
@@ -649,10 +661,19 @@ def _(Model, np, pd):
                 mean_wait_ICU = np.mean([np.mean(p.icu_wait_times) if p.icu_wait_times else 0 for p in my_model.patients])
                 mean_wait_inpatient = np.mean([np.mean(p.inpatient_wait_times) if p.inpatient_wait_times else 0 for p in my_model.patients])
 
+                ## mean wait times for H2, H3, commented out for now
+                # mean_wait_h2_inpatient = np.mean([np.mean(p.h2_inpatient_wait_times) if p.h2_inpatient_wait_times else 0 for p in my_model.patients])
+                # mean_wait_h3_inpatient = np.mean([np.mean(p.h3_inpatient_wait_times) if p.h3_inpatient_wait_times else 0 for p in my_model.patients])
+
                 # Compute mean service times
                 mean_service_ED = np.mean([np.mean(p.ed_service_times) if p.ed_service_times else 0 for p in my_model.patients])
                 mean_service_ICU = np.mean([np.mean(p.icu_service_times) if p.icu_service_times else 0 for p in my_model.patients])
                 mean_service_inpatient = np.mean([np.mean(p.inpatient_service_times) if p.inpatient_service_times else 0 for p in my_model.patients])
+
+
+            ###  mean service times for h2, h3 (commented out for now)
+               # mean_service_h2_inpatient = np.mean([np.mean(p.h2_inpatient_service_times) if p.h2_inpatient_service_times else 0 for p in my_model.patients])
+               #  mean_service_h3_inpatient = np.mean([np.mean(p.h3_inpatient_service_times) if p.h3_inpatient_service_times else 0 for p in my_model.patients])
 
                 # Mean total time in system per patient
                 total_times = [p.total_time for p in my_model.patients if p.total_time is not None]
@@ -666,6 +687,10 @@ def _(Model, np, pd):
                     "Mean Service Time ICU": mean_service_ICU,
                     "Mean Queue Time Inpatient": mean_wait_inpatient,
                     "Mean Service Time Inpatient": mean_service_inpatient,
+                    # "Mean Queue Time H2 Inpatient": mean_wait_h2_inpatient,
+                    # "Mean Service Time H2 Inpatient": mean_service_h2_inpatient,
+                    # "Mean Queue Time H3 Inpatient": mean_wait_h3_inpatient,
+                    # "Mean Service Time H3 Inpatient": mean_service_h3_inpatient,
                     "Mean Total Time": mean_total_time
                 }
 
