@@ -225,11 +225,8 @@ class g:
     arrival_rate = 0.15
 
 
-    # transfer prob
+    # deteriation rate
     deteriation_rate = 0.05
-    deterioration_transfer_prob = 0.95
-
-    overflow_transfer_prob = 0.5
     
 
     # Simulation running parameters
@@ -240,54 +237,48 @@ class g:
     audit_interval = 1
 
 
-@app.cell
-def _(random):
-    class Patient:
-        def __init__(self, p_id, encounter_id, path, ever_icu):
-            self.identifier = p_id
-            # Real-world identifier
-            self.encounter_id = encounter_id  # formerly transfer_id
-            # Patient journey: list of (location, duration)
-            self.path = path  
-            # Outcomes
-            self.arrival = None
-            self.total_time = None
-            self.ed_wait_times = []           # Changed from 0.0 to [], it is appending and can't append float it needs to be list
-            self.icu_wait_times = []          # Changed from 0.0 to []
-            self.inpatient_wait_times = []    # Changed from 0.0 to []
-            self.ed_service_times = []        # Changed from 0.0 to []
-            self.icu_service_times = []       # Changed from 0.0 to []
-            self.inpatient_service_times = []
+@app.class_definition
+class Patient:
+    def __init__(self, p_id, encounter_id, path, ever_icu):
+        self.identifier = p_id
+        # Real-world identifier
+        self.encounter_id = encounter_id  # formerly transfer_id
+        # Patient journey: list of (location, duration)
+        self.path = path  
+        # Outcomes
+        self.arrival = None
+        self.total_time = None
+        self.ed_wait_times = []           # Changed from 0.0 to [], it is appending and can't append float it needs to be list
+        self.icu_wait_times = []          # Changed from 0.0 to []
+        self.inpatient_wait_times = []    # Changed from 0.0 to []
+        self.ed_service_times = []        # Changed from 0.0 to []
+        self.icu_service_times = []       # Changed from 0.0 to []
+        self.inpatient_service_times = []
 
-            # NEW!
+        # NEW!
 
-            # logging lists for h2 and h3
-            self.h2_inpatient_wait_times = []    # Changed from 0.0 to []
-            self.h2_inpatient_service_times = []
+        # logging lists for h2 and h3
+        self.h2_inpatient_wait_times = []    # Changed from 0.0 to []
+        self.h2_inpatient_service_times = []
 
-            self.h3_inpatient_wait_times = []    # Changed from 0.0 to []
-            self.h3_inpatient_service_times = []
-
-        
-            self.ever_icu = ever_icu
-            # can be assigned in assign_initial_hosp
-            self.assigned_hospital = "H1" if self.ever_icu else random.choice(["H2", "H3"]) 
-        
-            # list of hospitals they've ever been to
-            self.transfer_list = []
-
-
-            # transfer logic
-            self.transfer_to_h1 = False       # For non-ICU patient deterioration
-            self.transfer_to_h2 = False       # Optional, e.g., overflow logic
-            self.transfer_to_h3 = False       # Optional, e.g., overflow logic
+        self.h3_inpatient_wait_times = []    # Changed from 0.0 to []
+        self.h3_inpatient_service_times = []
 
         
-    return (Patient,)
+        self.ever_icu = ever_icu
+        # can be assigned in assign_initial_hosp
+        self.assigned_hospital = None
+        
+        # list of hospitals they've ever been to
+        self.transfer_list = []
+
+        # deteriation/transfer logics
+        deterioration_transfer_prob = 0.95
+        overflow_transfer_prob = 0.5
 
 
 @app.cell
-def _(EventLogger, Exponential, Patient, VidigiStore, pd, random, simpy):
+def _(EventLogger, Exponential, VidigiStore, pd, random, simpy):
     class Model:
         def __init__(self, run_number, df, acuity_flags):
             # Create a SimPy environment in which everything will live
