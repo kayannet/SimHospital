@@ -13,7 +13,7 @@
 
 import marimo
 
-__generated_with = "0.19.3"
+__generated_with = "0.19.6"
 app = marimo.App(width="medium")
 
 
@@ -184,6 +184,22 @@ def _(activities_df):
     return
 
 
+@app.cell
+def _(collapsed_library):
+    # acuity flags
+    acuity_flags = {
+        encounter_id: any(location == "ICU" for location, _ in path)
+        for encounter_id, path in collapsed_library.items()
+    }
+    acuity_flags
+    return
+
+
+@app.cell
+def _():
+    return
+
+
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
@@ -203,7 +219,7 @@ class g:
     trauma_treat_var = 5 # Variance of the trauma cubicle treatment distribution (Lognormal)
 
     # Arrival rate (placeholder, used Karandeep's code ~3.33 patients per hour)
-    arrival_rate = 0.5
+    arrival_rate = 0.15
 
     # Simulation running parameters
     sim_duration = 168 # The number of time units the simulation will run for
@@ -229,7 +245,7 @@ class Patient:
         self.inpatient_wait_times = []    # Changed from 0.0 to []
         self.ed_service_times = []        # Changed from 0.0 to []
         self.icu_service_times = []       # Changed from 0.0 to []
-        self.inpatient_service_times = [] # Changed from 0.0 to []
+        self.inpatient_service_times = []
 
 
 @app.cell
@@ -291,7 +307,7 @@ def _(EventLogger, Exponential, VidigiStore, pd, random, simpy):
             self.utilization_audit = []
 
             # need to add these for utilization plot 
-        
+
             self.ed_utilization = []
             self.icu_utilization = []
             self.inpatient_utilization = []
@@ -452,14 +468,14 @@ def _(EventLogger, Exponential, VidigiStore, pd, random, simpy):
             while True:
                 for r in resources:
                     resource_obj = r["resource_object"]
-            
+
                     # VidigiStore is based on SimPy Store
                     # items = list of items currently in the store
                     # For beds, when a patient "gets" a bed, it's removed from store
                     # So utilization = capacity - current items available
-            
+
                     current_items = len(resource_obj.items) if hasattr(resource_obj, 'items') else 0
-            
+
                     self.utilization_audit.append({
                         'resource_name': r["resource_name"],
                         'simulation_time': self.env.now,
