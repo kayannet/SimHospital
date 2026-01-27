@@ -13,7 +13,7 @@
 
 import marimo
 
-__generated_with = "0.19.3"
+__generated_with = "0.19.6"
 app = marimo.App(width="medium")
 
 
@@ -452,7 +452,7 @@ def _(EventLogger, Exponential, VidigiStore, pd, random, simpy):
             # Calculate Main inpatient occupancy (do this for everyone)
             main_inpatient_available = len(self.inpatient_beds.items)
             main_inpatient_occupancy = (g.inpatient_bed_cap - main_inpatient_available) / g.inpatient_bed_cap
-    
+
             # High-acuity patients (need ICU) MUST go to Main
             if patient.ever_icu:
                 patient.assigned_hospital = "H1"
@@ -468,23 +468,23 @@ def _(EventLogger, Exponential, VidigiStore, pd, random, simpy):
                     # Send to Main hospital
                     patient.assigned_hospital = "H1"
                     patient.transfer_list.append("H1")
-    
+
             print(f"Patient {patient.identifier}: ever_icu={patient.ever_icu}, assigned to {patient.assigned_hospital}, occupancy={main_inpatient_occupancy:.2f}")
 
         # UPDATED v2 patient_journey - Routes patients to correct hospital resources based on assigned_hospital
         def patient_journey(self, patient):
             patient.arrival = self.env.now
             self.logger.log_arrival(entity_id=patient.identifier)  # ADD THIS LINE
-    
+
             # Assign patient to a hospital
             self.assign_initial_hospital(patient)
-        
+
             for location, duration in patient.path:
                 # Skip ED and ICU for H2/H3 patients (they don't have these resources)
                 if patient.assigned_hospital in ["H2_INPATIENT", "H3_INPATIENT"]:
                     if location in ['ED', 'ICU']:
                         continue  # Skip these steps for lower-acuity hospitals
-    
+
                 # Map location to the correct hospital's resource
                 if location == 'ED':
                     resource_pool = self.ed_beds
@@ -524,13 +524,13 @@ def _(EventLogger, Exponential, VidigiStore, pd, random, simpy):
 
                 # Save original location for deterioration check
                 original_location = location
-            
+
                 # Update location name for logging to match hospital
                 if patient.assigned_hospital == "H2_INPATIENT":
                     location = "H2_INPATIENT"
                 elif patient.assigned_hospital == "H3_INPATIENT":
                     location = "H3_INPATIENT"
-                
+
                 # Request and use the resource
                 start_wait = self.env.now
                 self.logger.log_queue(entity_id=patient.identifier, 
@@ -539,7 +539,7 @@ def _(EventLogger, Exponential, VidigiStore, pd, random, simpy):
 
                 with resource_pool.request() as req:
                     bed = yield req
-        
+
                     wait_time = self.env.now - start_wait
                     getattr(patient, wait_attr).append(wait_time)
 
@@ -568,7 +568,7 @@ def _(EventLogger, Exponential, VidigiStore, pd, random, simpy):
                         if random.random() < 0.95:
                             # Save old hospital FIRST (before using it)
                             old_hospital = patient.assigned_hospital
-            
+
                             print(f"[t={self.env.now:.1f}] Patient {patient.encounter_id} DETERIORATING at {old_hospital}, transferring to H1 ICU")
 
                             self.logger.log_event(
@@ -584,40 +584,40 @@ def _(EventLogger, Exponential, VidigiStore, pd, random, simpy):
                             # Update hospital assignment
                             patient.assigned_hospital = "H1"
                             patient.transfer_list.append(f"Transfer: {old_hospital} -> H1 (deterioration)")
-            
+
                             # Now patient needs ICU at H1
                             # Request H1 ICU bed
                             start_wait = self.env.now
                             self.logger.log_queue(entity_id=patient.identifier, 
                                                   event_type='queue',
                                                   event="ICU_wait_begins")
-            
+
                             with self.icu_beds.request() as req:
                                 bed = yield req
-                
+
                                 wait_time = self.env.now - start_wait
                                 patient.icu_wait_times.append(wait_time)
-                
+
                                 self.logger.log_resource_use_start(
                                     entity_id=patient.identifier,
                                     event_type='resource_use',
                                     event="ICU_begins",
                                     resource_id=bed.id_attribute
                                 )
-                
+
                                 # Sample ICU duration from deteriorated patients in your data
                                 # For now, use a reasonable default (24-72 hours)
                                 icu_duration = random.uniform(24, 72)
                                 yield self.env.timeout(icu_duration)
                                 patient.icu_service_times.append(icu_duration)
-                
+
                                 self.logger.log_resource_use_end(
                                     entity_id=patient.identifier,
                                     event_type='resource_use_end',
                                     event="ICU_ends",
                                     resource_id=bed.id_attribute
                                 )
-                
+
                                 print(f"[t={self.env.now:.1f}] Patient {patient.identifier} completed ICU after deterioration, RELEASING ICU bed")
 
             patient.total_time = self.env.now - patient.arrival
@@ -626,7 +626,7 @@ def _(EventLogger, Exponential, VidigiStore, pd, random, simpy):
                 event_type='arrival_departure',
                 event='depart'
             )
-    
+
         def interval_audit_utilization(self, resources, interval=1):
             """
             Track resource utilization over time.
@@ -701,10 +701,10 @@ def _(Model, np, pd):
                 "Mean Service Time ICU",
                 "Mean Queue Time Inpatient",
                 "Mean Service Time Inpatient",
-                # "Mean Queue Time H2 Inpatient", 
-                # "Mean Service Time H2 Inpatient", 
-                # "Mean Queue Time H3 Inpatient", 
-                # "Mean Service Time H3 Inpatient", 
+                "Mean Queue Time H2 Inpatient", 
+                "Mean Service Time H2 Inpatient", 
+                "Mean Queue Time H3 Inpatient", 
+                "Mean Service Time H3 Inpatient", 
                 "Mean Total Time"
             ])
             self.all_event_logs = [] 
@@ -721,8 +721,8 @@ def _(Model, np, pd):
                 mean_wait_inpatient = np.mean([np.mean(p.inpatient_wait_times) if p.inpatient_wait_times else 0 for p in my_model.patients])
 
                 ## mean wait times for H2, H3, commented out for now
-                # mean_wait_h2_inpatient = np.mean([np.mean(p.h2_inpatient_wait_times) if p.h2_inpatient_wait_times else 0 for p in my_model.patients])
-                # mean_wait_h3_inpatient = np.mean([np.mean(p.h3_inpatient_wait_times) if p.h3_inpatient_wait_times else 0 for p in my_model.patients])
+                mean_wait_h2_inpatient = np.mean([np.mean(p.h2_inpatient_wait_times) if p.h2_inpatient_wait_times else 0 for p in my_model.patients])
+                mean_wait_h3_inpatient = np.mean([np.mean(p.h3_inpatient_wait_times) if p.h3_inpatient_wait_times else 0 for p in my_model.patients])
 
                 # Compute mean service times
                 mean_service_ED = np.mean([np.mean(p.ed_service_times) if p.ed_service_times else 0 for p in my_model.patients])
@@ -730,9 +730,9 @@ def _(Model, np, pd):
                 mean_service_inpatient = np.mean([np.mean(p.inpatient_service_times) if p.inpatient_service_times else 0 for p in my_model.patients])
 
 
-            ###  mean service times for h2, h3 (commented out for now)
-               # mean_service_h2_inpatient = np.mean([np.mean(p.h2_inpatient_service_times) if p.h2_inpatient_service_times else 0 for p in my_model.patients])
-               #  mean_service_h3_inpatient = np.mean([np.mean(p.h3_inpatient_service_times) if p.h3_inpatient_service_times else 0 for p in my_model.patients])
+            ##  mean service times for h2, h3 (commented out for now)
+                mean_service_h2_inpatient = np.mean([np.mean(p.h2_inpatient_service_times) if p.h2_inpatient_service_times else 0 for p in my_model.patients])
+                mean_service_h3_inpatient = np.mean([np.mean(p.h3_inpatient_service_times) if p.h3_inpatient_service_times else 0 for p in my_model.patients])
 
                 # Mean total time in system per patient
                 total_times = [p.total_time for p in my_model.patients if p.total_time is not None]
@@ -746,10 +746,10 @@ def _(Model, np, pd):
                     "Mean Service Time ICU": mean_service_ICU,
                     "Mean Queue Time Inpatient": mean_wait_inpatient,
                     "Mean Service Time Inpatient": mean_service_inpatient,
-                    # "Mean Queue Time H2 Inpatient": mean_wait_h2_inpatient,
-                    # "Mean Service Time H2 Inpatient": mean_service_h2_inpatient,
-                    # "Mean Queue Time H3 Inpatient": mean_wait_h3_inpatient,
-                    # "Mean Service Time H3 Inpatient": mean_service_h3_inpatient,
+                    "Mean Queue Time H2 Inpatient": mean_wait_h2_inpatient,
+                    "Mean Service Time H2 Inpatient": mean_service_h2_inpatient,
+                    "Mean Queue Time H3 Inpatient": mean_wait_h3_inpatient,
+                    "Mean Service Time H3 Inpatient": mean_service_h3_inpatient,
                     "Mean Total Time": mean_total_time
                 }
 
@@ -781,28 +781,48 @@ def _(my_trial):
 def _(EventPosition, create_event_position_df):
     event_position_df = create_event_position_df([
         # Arrival
-        EventPosition(event='arrival', x=50, y=450, label="Arrival"),
+        EventPosition(event='arrival', x=20, y=800, label="Arrival"),
 
         # ED
-        EventPosition(event='ED_wait_begins', x=200, y=375, label="Waiting for ED"),
-        EventPosition(event='ED_begins', x=100, y=200, label="Being Treated in ED", resource='ed_bed_cap'),
+        EventPosition(event='ED_wait_begins', x=400, y=800, label="Waiting for ED"),
+        EventPosition(event='ED_begins', x=400, y=650, label="Being Treated in ED", resource='ed_bed_cap'),
 
-        # ICU
-        EventPosition(event='ICU_wait_begins', x=400, y=200, label="Waiting for ICU"),
-        EventPosition(event='ICU_begins', x=400, y=100, label="Being Treated in ICU", resource='icu_bed_cap'),
+        # ICU lane (upper)
+        EventPosition(event='ICU_wait_begins', x=400, y=530, label="Waiting for ICU"),
+        EventPosition(event='ICU_begins', x=400, y=420, label="Being Treated in ICU", resource='icu_bed_cap'),
 
-        # Inpatient
-        EventPosition(event='INPATIENT_wait_begins', x=600, y=400, label="Waiting for Inpatient"),
-        EventPosition(event='INPATIENT_begins', x=600, y=300, label="Being Treated in Inpatient", resource='inpatient_bed_cap'),
+        # Inpatient lane
+        EventPosition(event='INPATIENT_wait_begins', x=400, y=250, label="Waiting for Inpatient"),
+        EventPosition(event='INPATIENT_begins', x=400, y=80, label="Being Treated in Inpatient", resource='inpatient_bed_cap'),
 
-        # Exit / Discharge
-        EventPosition(event='depart', x=800, y=100, label="Discharge")
+        # H2 lane
+        EventPosition(event='H2_INPATIENT_wait_begins', x=750, y=800, label="Waiting for H2 Inpatient"),
+        EventPosition(event='H2_INPATIENT_begins', x=750, y=550, label="Being Treated in H2 Inpatient", resource='h2_inpatient_bed_cap'),
+
+        # H3 lane
+        EventPosition(event='H3_INPATIENT_wait_begins', x=750, y=320, label="Waiting for H3 Inpatient"),
+        EventPosition(event='H3_INPATIENT_begins', x=750, y=100, label="Being Treated in H3 Inpatient", resource='h3_inpatient_bed_cap'),
+
+        # Discharge (common endpoint)
+        EventPosition(event='depart', x=800, y=10, label="Discharge")
     ])
     return (event_position_df,)
 
 
 @app.cell
-def _(animate_activity_log, event_position_df, my_trial):
+def _():
+    from pathlib import Path
+    from PIL import Image
+
+    BASE_DIR = Path(__file__).resolve().parent
+    bg_path = BASE_DIR / "simulation_v1_bg.png"
+
+    bg_img = Image.open(bg_path)
+    return (bg_img,)
+
+
+@app.cell
+def _(animate_activity_log, bg_img, event_position_df, my_trial):
 
     # Filter our dataframe down to a single run
     single_run_event_log_df = my_trial.all_event_logs_df[my_trial.all_event_logs_df['run_number']==1]
@@ -819,38 +839,42 @@ def _(animate_activity_log, event_position_df, my_trial):
             # make it last as long as our originally defined simulation duration
             limit_duration=g.sim_duration,
             # Turn on logging messages
-            debug_mode=True,
+            debug_mode=False,
             # Turn on axis units - this can help with honing your event_position_df iteratively
-            setup_mode=True,
+            setup_mode=False,
             # How big should the time steps be? Here,
             every_x_time_units= 1,
             # Should the animation allow you to just drag a slider to progress through the animation,
             # or should it include a play button?
             include_play_button=True,
             # How big should the icons representing our entities be?
-            entity_icon_size=20,
+            entity_icon_size=10,
             # How big should the icons representing our resources be?
-            resource_icon_size=20,
+            resource_icon_size=10,
             # How big should the gap between our entities be when they are queueing?
-            gap_between_entities=6,
+            gap_between_entities=5,
             gap_between_resources=10,
             # When we wrap the entities to fit more neatly on the screen, how big should the vertical
             # gap be between these rows?
-            gap_between_queue_rows=25,
+            gap_between_queue_rows= 5,
+            gap_between_resource_rows=5,
+
             # How tall, in pixels, should the plotly plot be?
-            plotly_height=800,
+            plotly_height=1000,
             # How wide, in pixels, should the plotly plot be?
-            plotly_width=1000,
+            plotly_width=800,
             # How long, in milliseconds, should each frame last?
-            frame_duration= 600,
+            frame_duration= 800,
             # How long, in milliseconds, should the transition between each pair of frames be?
-            frame_transition_duration=600,
+            frame_transition_duration=800,
             # How wide, in coordinates, should our plot's internal coordinate system be?
-            # override_x_max=1000,
+            override_x_max=800,
             # How tall, in coordinates, should our plot's internal coordinate system be?
-            # override_y_max=500,
+            override_y_max=1000,
             # How long should a queue be before it starts wrapping vertically?
-            wrap_queues_at=25,
+            wrap_queues_at=30,
+            wrap_resources_at=30,
+
             # What are the maximum numbers of entities that should be displayed in any queueing steps
             # before displaying additional entities as a text string like '+ 37 more'
             step_snapshot_max=125,
@@ -858,7 +882,13 @@ def _(animate_activity_log, event_position_df, my_trial):
             time_display_units="simulation_day_clock_ampm",
             simulation_time_unit='hours',
             # display our Label column from our event_position_df to identify the position of each icon
-            display_stage_labels=True
+            display_stage_labels=False, 
+            add_background_image= bg_img, 
+            background_image_opacity=1,
+            resource_opacity= 0,
+
+
+
         )
     return (single_run_event_log_df,)
 
