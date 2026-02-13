@@ -47,9 +47,9 @@ Due to data-use agreements, the MIMIC-IV ED dataset cannot be hosted publicly. T
 
 | File | Language | Description |
 |------|----------|-------------|
-| [ucsd_health_simulation.html](src/notebooks/ucsd_health_simulation.html) | Python | DES file with UCSD health data, modeled using multiple arrival rates in order to infer proper resource capacities |
+| [ucsd_health_simulation.html](https://kayannet.github.io/SimHospital/ucsd_health_simulation.html) | Python | DES file with UCSD health data, modeled using multiple arrival rates in order to infer proper resource capacities |
 | [mimic_simulation.py](src/simulation/mimic_simulation.py) | Python | Multi-hospital model with MIMIC data, synthesized 3 different hospitals (to resemble UCSD's system) and experimented with dynamic routing based on whether or not the patient is marked as high acuity |
-| [ucsd_health_eda.html](src/notebooks/ucsd_health_eda.html) | Python | Exploratory data analysis of UCSD Health data, includes aggregates and tables (no PHI)|
+| [ucsd_health_eda.html](https://kayannet.github.io/SimHospital/ucsd_health_eda.html) | Python | Exploratory data analysis of UCSD Health data, includes aggregates and tables (no PHI)|
 
 
 From Quarter 1:
