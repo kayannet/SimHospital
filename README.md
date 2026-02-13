@@ -8,7 +8,7 @@ This project began using MIMIC to build the skeleton of our hospital simulation,
 
 <h2 style="color:#4F81BD;">Data Access</h2>
 
-Due to HIPPA, we cannot share the actual data used, but will provide the data aggregates, tables, and simulation results.
+Due to HIPPA, we cannot share the actual UCSD Health data used, but will provide the data aggregates, tables, and simulation results.
 
 Due to data-use agreements, the MIMIC-IV ED dataset cannot be hosted publicly. The files are also too large for GitHub, so they must be downloaded and stored locally outside of the project root folder.
 📁 [Download MIMIC_ED Folder](https://drive.google.com/drive/folders/1R39eyLbLz9ccqoQCbLDfq12LXLs3ZFt9?usp=share_link)
