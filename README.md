@@ -79,6 +79,11 @@ cd SimHospital
 ```bash
 pip install -r requirements.txt
 ```
+**Launch Marimo Notebook**
+```bash
+marimo edit --sandbox src/notebooks/simulation/ucsd_health_simulation.py
+```
+or
 **Launch Jupyter and open the notebook:**
 ```bash
 jupyter notebook src/notebooks/01_clean_mimic_ed.ipynb
