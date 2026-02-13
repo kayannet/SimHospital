@@ -46,11 +46,6 @@ The MIMIC-ED folder should be placed outside the project directory so that the t
 
 <h2 style="color:#4F81BD;">Notebook Overview</h2>
 
-
-
-From Quarter 1:
-These files are our EDA and simulation building using MIMIC Data.
-
 | File | Language | Description |
 |------|----------|-------------|
 | [ucsd_health_simulation.html](https://kayannet.github.io/SimHospital/ucsd_health_simulation.html) | Python | DES file with UCSD health data, modeled using multiple arrival rates in order to infer proper resource capacities |
