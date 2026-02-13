@@ -1,5 +1,8 @@
-duckdb
-pandas
+marimo
+simpy
 numpy
+pandas
 matplotlib
+scipy
+vidigi
 seaborn
