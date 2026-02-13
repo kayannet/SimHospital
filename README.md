@@ -1,33 +1,14 @@
-<h1 style="text-align:center; color:#4F81BD;">🏥 SimHospital Phase 1: ED Capacity Estimation & Hospital LOS Prediction</h1>
+<h1 style="text-align:center; color:#4F81BD;">🏥 SimHospital Quarter 2: Migrating to UCSD Health Data</h1>
 
-This project represents **Phase 1** of *SimHospital*, a multi-stage initiative to develop data-driven tools for hospital operational planning and patient flow optimization using **Discrete-Event Simulation (DES)**.
+This project represents **Quarter 2** of *SimHospital*, a multi-stage initiative to develop data-driven tools for hospital operational planning and patient flow optimization using **Discrete-Event Simulation (DES)**.
 
-The current phase has two primary objectives:
-
-1. **Estimate Emergency Department bed capacity** using discrete event simulation with empirical MIMIC-IV data
-2. **Predict hospital length of stay** for admitted patients to support future transfer decision logic
-
-By leveraging the publicly available **MIMIC-IV Emergency Department dataset** (425,028 visits from Beth Israel Deaconess Medical Center, 2008-2019), we establish a reproducible, data-driven baseline before scaling to institutional data at UC San Diego Health in Phase 2.
-
----
-
-<h2 style="color:#4F81BD;">Phase 1 Deliverables</h2>
-
-**Emergency Department Simulator**
-- Built discrete event simulation using R/simmer package with empirical MIMIC-IV parameters
-- **Key Finding**: Estimated Beth Israel ED requires **54-60 beds** under baseline conditions
-- Validated capacity through constrained simulation runs (mean utilization: 53%, peak: 90%)
-- Addressed privacy-shifted timestamps using aggregate arrival rate calculation (~106 patients/day)
-
-**Hospital LOS Prediction Model** 
-- Trained XGBoost model to predict hospital length of stay for admitted patients
-- Features: patient acuity, demographics, ED LOS, medication count
-- Model demonstrates clinically appropriate relationships (sicker patients → longer predicted stays)
-- Establishes framework for Phase 2 transfer decision criteria (>80th percentile → Hospital 2)
+This project began using MIMIC to build the skeleton of our hospital simulation, and we were able to switch to UCSD Health data and apply the same logics.
 
 ---
 
 <h2 style="color:#4F81BD;">Data Access</h2>
+
+Due to HIPPA, we cannot share the actual data used, but will provide the data aggregates, tables, and simulation results.
 
 Due to data-use agreements, the MIMIC-IV ED dataset cannot be hosted publicly. The files are also too large for GitHub, so they must be downloaded and stored locally outside of the project root folder.
 📁 [Download MIMIC_ED Folder](https://drive.google.com/drive/folders/1R39eyLbLz9ccqoQCbLDfq12LXLs3ZFt9?usp=share_link)
@@ -46,10 +27,15 @@ Due to data-use agreements, the MIMIC-IV ED dataset cannot be hosted publicly. T
 /SimHospital
   │
   ├── src                      <-- Main source folder
-  │   ├── notebooks            <-- Python notebooks (EDA, visualizations, modeling)
+  │   ├── notebooks            <-- Jupyter notebooks (EDA, visualizations, modeling)
+  │   ├── simulation           <-- Python files with simulation builds
   │   └── r_script             <-- R scripts (DES, simulation, modeling)
+  │
   |
   ├── results                  <-- Outputs (plots, tables, metrics)
+  |
+  |
+  ├── docs                     <-- Documents (ex. old readme.md versions)   
   |
   ├── requirements.txt     
   └── README.md
@@ -59,14 +45,30 @@ Due to data-use agreements, the MIMIC-IV ED dataset cannot be hosted publicly. T
 
 <h2 style="color:#4F81BD;">Notebook Overview</h2>
 
-| Notebook | Language | Description |
+
+
+
+
+From Quarter 1:
+These files are our EDA and simulation building using MIMIC Data.
+
+| File | Language | Description |
+|------|----------|-------------|
+| [ucsd_health_simulation.html](src/notebooks/ucsd_health_simulation.html) | Python | DES file with UCSD health data, modeled using multiple arrival rates in order to infer proper resource capacities |
+| [mimic_simulation.py](src/simulation/mimic_simulation.py) | Python | Multi-hospital model with MIMIC data, synthesized 3 different hospitals (to resemble UCSD's system) and experimented with dynamic routing based on whether or not the patient is marked as high acuity |
+| [ucsd_health_eda.html](src/notebooks/ucsd_health_eda.html) | Python | Exploratory data analysis of UCSD Health data, includes aggregates and tables (no PHI)|
+
+
+
+From Quarter 1:
+| File | Language | Description |
 |----------|-------------|-------------|
-| [01_clean_mimic_ed.ipynb](src/notebooks/01_clean_mimic_ed.ipynb) | Python | Loads the raw MIMIC-IV ED extract, inspects the schema, and produces a cleaned encounter-level table (`mimicel_clean.csv`) with one row per ED stay and standardized arrival/triage/depart timestamps. This dataset is the basis for estimating arrival rates, door-to-triage times, and length-of-stay distributions for the baseline DES model. |
-| [02_activity_sequence_analysis.ipynb](src/notebooks/02_activity_sequence_analysis.ipynb) | Python|  Uses a 5% patient sample to explore ED activity sequences. Deduplicates the activity log, builds an interactive patient-journey lookup tool, and computes transition probabilities and mean inter-activity times between key ED steps (Enter ED → Triage → Vital signs → Med reconciliation/dispensations → Discharge). |
-| [03_build_sim_input_tables.ipynb](src/notebooks/03_build_sim_input_tables.ipynb) | Python| Processes and normalizes the cleaned activity log into four analysis-ready datasets—`ed_stays`, `ed_activity_log`, `ed_diagnoses`, and `ed_medications`—and saves them as CSV files. Includes data quality validation, deduplication, and standardization. These four datasets are the direct inputs to the discrete-event simulation model. |
-| [04_training_df_aggregates.ipynb](src/notebooks/04_training_df_aggregates.ipynb) | Python| Aggregates and prepares the cleaned ED datasets into a training dataframe for modeling in R. Includes summary statistics, probability aggregates, and visualizations that inform simulation branching logic. |
-[05_R_model_v1.ipynb](src/notebooks/05_R_model_v1.ipynb) | R| Feature engineering and creates baseline model, XGBoost only model, and ensemble model. Includes performance evaluation and comparisons. |
-| [hospital_sim_v1.ipynb](src/notebooks/hospital_sim_v1.ipynb)| R| Implements a baseline ED simulation: patients arrive, length-of-stay (LOS) is sampled from ed_stays.csv, and admitted patients’ LOS is predicted using the R model.|
+| [01_clean_mimic_ed.ipynb](src/notebooks/mimic_eda/01_clean_mimic_ed.ipynb) | Python | Loads the raw MIMIC-IV ED extract, inspects the schema, and produces a cleaned encounter-level table (`mimicel_clean.csv`) with one row per ED stay and standardized arrival/triage/depart timestamps. This dataset is the basis for estimating arrival rates, door-to-triage times, and length-of-stay distributions for the baseline DES model. |
+| [02_activity_sequence_analysis.ipynb](src/notebooks/mimic_eda/02_activity_sequence_analysis.ipynb) | Python|  Uses a 5% patient sample to explore ED activity sequences. Deduplicates the activity log, builds an interactive patient-journey lookup tool, and computes transition probabilities and mean inter-activity times between key ED steps (Enter ED → Triage → Vital signs → Med reconciliation/dispensations → Discharge). |
+| [03_build_sim_input_tables.ipynb](src/notebooks/mimic_eda/03_build_sim_input_tables.ipynb) | Python| Processes and normalizes the cleaned activity log into four analysis-ready datasets—`ed_stays`, `ed_activity_log`, `ed_diagnoses`, and `ed_medications`—and saves them as CSV files. Includes data quality validation, deduplication, and standardization. These four datasets are the direct inputs to the discrete-event simulation model. |
+| [04_training_df_aggregates.ipynb](src/notebooks/mimic_eda/04_training_df_aggregates.ipynb) | Python| Aggregates and prepares the cleaned ED datasets into a training dataframe for modeling in R. Includes summary statistics, probability aggregates, and visualizations that inform simulation branching logic. |
+[05_R_model_v1.ipynb](src/notebooks/archive/05_R_model_v1.ipynb) | R| Feature engineering and creates baseline model, XGBoost only model, and ensemble model. Includes performance evaluation and comparisons. |
+| [hospital_sim_v1.ipynb](src/notebooks/mimic_eda/hospital_sim_v1.ipynb)| R| Implements a baseline ED simulation: patients arrive, length-of-stay (LOS) is sampled from ed_stays.csv, and admitted patients’ LOS is predicted using the R model.|
 
 
 
