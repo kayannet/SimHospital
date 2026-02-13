@@ -7,10 +7,11 @@ This project began using MIMIC to build the skeleton of our hospital simulation,
 ---
 
 <h2 style="color:#4F81BD;">Data Access</h2>
+Due to HIPAA restrictions, the UCSD Health data used in this project cannot be shared. Only aggregated results, tables, and simulation outputs are included in this repository.
 
-Due to HIPPA, we cannot share the actual data used, but will provide the data aggregates, tables, and simulation results.
+If you would like to run the simulation yourself with real-world clinical data, you can instead use the publicly available MIMIC-IV Emergency Department (MIMIC-ED) dataset. Because of data-use agreements and file size limitations, the dataset must be downloaded separately and cannot be hosted on GitHub.
 
-Due to data-use agreements, the MIMIC-IV ED dataset cannot be hosted publicly. The files are also too large for GitHub, so they must be downloaded and stored locally outside of the project root folder.
+The MIMIC-ED folder should be placed outside the project directory so that the two are sibling folders and file paths resolve correctly.
 📁 [Download MIMIC_ED Folder](https://drive.google.com/drive/folders/1R39eyLbLz9ccqoQCbLDfq12LXLs3ZFt9?usp=share_link)
 
 **MIMIC-ED should be placed outside the SimHospital folder so that the two are sibling directories and file paths in the project function correctly.**
@@ -45,11 +46,17 @@ Due to data-use agreements, the MIMIC-IV ED dataset cannot be hosted publicly. T
 
 <h2 style="color:#4F81BD;">Notebook Overview</h2>
 
+
+
+From Quarter 1:
+These files are our EDA and simulation building using MIMIC Data.
+
 | File | Language | Description |
 |------|----------|-------------|
 | [ucsd_health_simulation.html](src/notebooks/ucsd_health_simulation.html) | Python | DES file with UCSD health data, modeled using multiple arrival rates in order to infer proper resource capacities |
 | [mimic_simulation.py](src/simulation/mimic_simulation.py) | Python | Multi-hospital model with MIMIC data, synthesized 3 different hospitals (to resemble UCSD's system) and experimented with dynamic routing based on whether or not the patient is marked as high acuity |
 | [ucsd_health_eda.html](src/notebooks/ucsd_health_eda.html) | Python | Exploratory data analysis of UCSD Health data, includes aggregates and tables (no PHI)|
+
 
 
 From Quarter 1:
