@@ -13,7 +13,7 @@
 
 import marimo
 
-__generated_with = "0.19.6"
+__generated_with = "0.19.8"
 app = marimo.App(width="medium")
 
 
@@ -49,7 +49,6 @@ def _():
         mo,
         np,
         pd,
-        plt,
         random,
         simpy,
     )
@@ -57,7 +56,7 @@ def _():
 
 @app.cell
 def _(pd):
-    activities_df = pd.read_csv('MIMIC_ED/processed/all_transfers_df.csv')
+    activities_df = pd.read_csv('../../MIMIC_ED/processed/all_transfers_df.csv')
 
     activities_df['hadm_id'].fillna(0, inplace=True)
 
@@ -620,12 +619,12 @@ def _(EventLogger, Exponential, VidigiStore, pd, random, simpy):
 
                                 print(f"[t={self.env.now:.1f}] Patient {patient.identifier} completed ICU after deterioration, RELEASING ICU bed")
 
-            patient.total_time = self.env.now - patient.arrival
-            self.logger.log_event(
-                entity_id=patient.identifier,
-                event_type='arrival_departure',
-                event='depart'
-            )
+                patient.total_time = self.env.now - patient.arrival
+                self.logger.log_event(
+                    entity_id=patient.identifier,
+                    event_type='arrival_departure',
+                    event='depart'
+                )
 
         def interval_audit_utilization(self, resources, interval=1):
             """
@@ -685,6 +684,7 @@ def _(EventLogger, Exponential, VidigiStore, pd, random, simpy):
             )
             # Run the model for the duration specified in g class
             self.env.run(until=g.sim_duration)
+
     return (Model,)
 
 
@@ -760,6 +760,7 @@ def _(Model, np, pd):
             self.all_event_logs_df = pd.concat([logger.to_dataframe() for logger in self.all_event_logs])
             self.all_event_logs_df.sort_values(by=["time", "entity_id"], inplace=True)
             self.all_event_logs_df.reset_index(drop=True, inplace=True)
+
     return (Trial,)
 
 
@@ -894,42 +895,8 @@ def _(animate_activity_log, bg_img, event_position_df, my_trial):
 
 
 @app.cell
-def _(pd, plt, single_run_event_log_df):
-    def compute_usage(df, resource):
-        events = df[(df["event"].str.contains(f"{resource}_begins")) | 
-                    (df["event"].str.contains(f"{resource}_ends"))].copy()
-
-        events = events.sort_values("time")
-
-        in_use = 0
-        usage = []
-        for _, row in events.iterrows():
-            if row["event"].endswith("begins"):
-                in_use += 1
-            else:
-                in_use -= 1
-            usage.append((row["time"], in_use))
-
-        return pd.DataFrame(usage, columns=["time", "in_use"])
-
-
-    ed_usage = compute_usage(single_run_event_log_df, "ED")
-    icu_usage = compute_usage(single_run_event_log_df, "ICU")
-    inp_usage = compute_usage(single_run_event_log_df, "INPATIENT")
-    h2_usage = compute_usage(single_run_event_log_df, "H2_INPATIENT")
-    h3_usage = compute_usage(single_run_event_log_df, "H3_INPATIENT")
-
-    plt.figure(figsize=(10, 6))
-    plt.plot(ed_usage["time"], ed_usage["in_use"], label="H1 ED")
-    plt.plot(icu_usage["time"], icu_usage["in_use"], label="H1 ICU")
-    plt.plot(inp_usage["time"], inp_usage["in_use"], label="H1 Inpatient")
-    plt.plot(h2_usage["time"], h2_usage["in_use"], label="H2 Inpatient")
-    plt.plot(h3_usage["time"], h3_usage["in_use"], label="H3 Inpatient")
-    plt.xlabel("Time")
-    plt.ylabel("Beds in use")
-    plt.title("Resource Usage Over Time")
-    plt.legend()
-    plt.show()
+def _(arri):
+    arri
     return
 
 
