@@ -1,8 +1,8 @@
-<h1 style="text-align:center; color:#4F81BD;">🏥 SimHospital Quarter 2: Migrating to UCSD Health Data</h1>
+<h1 style="text-align:center; color:#4F81BD;">🏥 SimHospital Project 2: Migrating to UCSD Health Data</h1>
 
-This project represents **Quarter 2** of *SimHospital*, a multi-stage initiative to develop data-driven tools for hospital operational planning and patient flow optimization using **Discrete-Event Simulation (DES)**.
+This project represents **Project 2** of *SimHospital*, a multi-stage initiative to develop data-driven tools for hospital operational planning and patient flow optimization using **Discrete-Event Simulation (DES)**.
 
-This project began using MIMIC to build the skeleton of our hospital simulation, and we were able to switch to UCSD Health data and apply the same logics.
+This project began using MIMIC to build the skeleton of our hospital simulation (Project 1), where we modeled patient flow inside one hospital. We are now able to switch to UCSD Health data to model a multi-hospital system.
 
 ---
 
@@ -108,4 +108,4 @@ jupyter notebook src/notebooks/01_clean_mimic_ed.ipynb
 </details>
 
 
-<p style="text-align:center; font-style:italic;"> Last updated November 2025 · SimHospital (Project 1)</p>
+<p style="text-align:center; font-style:italic;"> Last updated February 2026 · SimHospital (Project 2)</p>
