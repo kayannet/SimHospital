@@ -141,9 +141,22 @@ jupyter notebook src/notebooks/01_clean_mimic_ed.ipynb
 <details>
 <summary><h2 style="color:#4F81BD;">Project Status</h2></summary>
 
-**Current Stage:** Data Cleaning & Metric Extraction (Phase 1)<br>
-**Next Steps:** Develop core DES model modules and validate against UCSD Health aggregates<br>
-**Goal:** Build a scalable, data-driven simulation framework for emergency and hospital-wide operations
+<b>Current Stage:</b> Simulation & Analysis (Phase 2)<br>
+- Multi-campus DES implemented for UCSD Health data<br>
+- Raw simulation logs generated and analyzed<br>
+- LOS predictor integrated for transfer decision modeling<br>
+- Preliminary visualizations and animations created using Vidigi<br><br>
+
+<b>Next Steps:</b>  
+- Validate simulation outputs against aggregate hospital metrics<br>
+- Refine transfer policies and scenario testing<br>
+- Produce final visualizations and HTML outputs for website<br>
+- Document findings and reproducible workflows<br><br>
+
+<b>Goal:</b>  
+- Provide actionable insights on ED congestion and patient flow<br>
+- Build a reproducible, modular simulation framework for multi-hospital systems<br>
+- Enable interactive exploration of results via HTML outputs and dashboards
 
 </details>
 
