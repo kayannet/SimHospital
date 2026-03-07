@@ -4,7 +4,17 @@ This project represents **Project 2** of *SimHospital*, a multi-stage initiative
 
 This project began using MIMIC to build the skeleton of our hospital simulation (Project 1), where we modeled patient flow inside one hospital. We are now able to switch to UCSD Health data to model a multi-hospital system.
 
+<ul>
+  <li>
+    <a href="docs/DSC_Capstone_Quarter_2_Report.pdf">Full Project Report</a> — methodology, results, discussion.
+  </li>
+  <li>
+    <a href="https://nadineorriss.github.io/simhospital-website/">Interactive Website</a> — visualizations, animations, and simulation outputs.
+  </li>
+</ul>
 ---
+
+
 <h2 style="color:#4F81BD;">Problem Statement</h2>
 
 Emergency departments frequently experience **boarding**, where admitted patients remain in the ED while waiting for an inpatient bed. Boarding contributes to longer wait times, reduced quality of care, and increased patient mortality.
