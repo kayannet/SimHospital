@@ -4,7 +4,17 @@ This project represents **Project 2** of *SimHospital*, a multi-stage initiative
 
 This project began using MIMIC to build the skeleton of our hospital simulation (Project 1), where we modeled patient flow inside one hospital. We are now able to switch to UCSD Health data to model a multi-hospital system.
 
+<ul>
+  <li>
+    <a href="docs/DSC_Capstone_Quarter_2_Report.pdf">Full Project Report</a> — methodology, results, discussion.
+  </li>
+  <li>
+    <a href="https://nadineorriss.github.io/simhospital-website/">Interactive Website</a> — visualizations, animations, and simulation outputs.
+  </li>
+</ul>
 ---
+
+
 <h2 style="color:#4F81BD;">Problem Statement</h2>
 
 Emergency departments frequently experience **boarding**, where admitted patients remain in the ED while waiting for an inpatient bed. Boarding contributes to longer wait times, reduced quality of care, and increased patient mortality.
@@ -131,11 +141,24 @@ jupyter notebook src/notebooks/01_clean_mimic_ed.ipynb
 <details>
 <summary><h2 style="color:#4F81BD;">Project Status</h2></summary>
 
-**Current Stage:** Data Cleaning & Metric Extraction (Phase 1)<br>
-**Next Steps:** Develop core DES model modules and validate against UCSD Health aggregates<br>
-**Goal:** Build a scalable, data-driven simulation framework for emergency and hospital-wide operations
+<b>Current Stage:</b> Simulation & Analysis (Phase 2)<br>
+- Multi-campus DES implemented for UCSD Health data<br>
+- Raw simulation logs generated and analyzed<br>
+- LOS predictor integrated for transfer decision modeling<br>
+- Preliminary visualizations and animations created using Vidigi<br><br>
+
+<b>Next Steps:</b>  
+- Validate simulation outputs against aggregate hospital metrics<br>
+- Refine transfer policies and scenario testing<br>
+- Produce final visualizations and HTML outputs for website<br>
+- Document findings and reproducible workflows<br><br>
+
+<b>Goal:</b>  
+- Provide actionable insights on ED congestion and patient flow<br>
+- Build a reproducible, modular simulation framework for multi-hospital systems<br>
+- Enable interactive exploration of results via HTML outputs and dashboards
 
 </details>
 
 
-<p style="text-align:center; font-style:italic;"> Last updated February 2026 · SimHospital (Project 2)</p>
+<p style="text-align:center; font-style:italic;"> Last updated March 2026 · SimHospital (Project 2)</p>
