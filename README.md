@@ -66,9 +66,7 @@ The MIMIC-ED folder should be placed outside the project directory so that the t
 ---
 
 <h2 style="color:#4F81BD;">Notebook Overview</h2>
-<h3 style="color:#4F81BD;">From Quarter 2</h3>
-
-
+### From Quarter 2
 | File | Language | Description |
 |------|----------|-------------|
 | [create_sim_animation.py](src/simulation/create_sim_animation.py) | Python | Animates a simulation run using Vidigi.|
@@ -81,7 +79,7 @@ The MIMIC-ED folder should be placed outside the project directory so that the t
 
 
 
-<h3 style="color:#4F81BD;">From Quarter 1</h3>
+### From Quarter 1
 | File | Language | Description |
 |----------|-------------|-------------|
 | [01_clean_mimic_ed.ipynb](src/notebooks/mimic_eda/01_clean_mimic_ed.ipynb) | Python | Loads the raw MIMIC-IV ED extract, inspects the schema, and produces a cleaned encounter-level table (`mimicel_clean.csv`) with one row per ED stay and standardized arrival/triage/depart timestamps. This dataset is the basis for estimating arrival rates, door-to-triage times, and length-of-stay distributions for the baseline DES model. |
