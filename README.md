@@ -13,7 +13,7 @@ In large multi-hospital systems, capacity shortages at one hospital can propagat
 
 This project builds a discrete-event simulation (DES) of patient flow across three UC San Diego Health campuses (La Jolla, Hillcrest, and East Campus). The goal is to identify system bottlenecks and evaluate potential policies for reducing ED congestion and improving patient flow across the hospital network.
 
-<h2 style="color:#4F81BD;">Key Insights</h2>
+## Key Insights
 - ED congestion in the system is driven primarily by **inpatient bed shortages**, not emergency department capacity.
 - **La Jolla and East Campus operate under chronic resource pressure**, while Hillcrest has comparatively greater capacity slack.
 - **LOS-triggered early transfers can eliminate boarding congestion at the source campus.**
