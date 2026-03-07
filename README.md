@@ -49,6 +49,7 @@ The MIMIC-ED folder should be placed outside the project directory so that the t
   ├── src                      <-- Main source folder
   │   ├── notebooks            <-- Jupyter notebooks (EDA, visualizations, modeling)
   │   ├── simulation           <-- Python files with simulation builds and analysis
+      ├── models               <-- Pretrained LOS predictor models
   │   └── r_script             <-- R scripts (DES, simulation, modeling)
   │
   |
