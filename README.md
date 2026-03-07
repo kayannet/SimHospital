@@ -57,7 +57,7 @@ The MIMIC-ED folder should be placed outside the project directory so that the t
   |   └── simulation_logs               
   |
   |
-  ├── docs                     <-- Documents (old readme.md, html notebooks)   
+  ├── docs                     <-- Documents (html outputs of python scripts, old readme.md)   
   |
   ├── requirements.txt     
   └── README.md
