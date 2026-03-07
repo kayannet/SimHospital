@@ -242,8 +242,8 @@ def _(EventPosition, create_event_position_df):
         EventPosition(event='ED_LA_JOLLA_wait_begins', x=230, y=600, label="Waiting for ED (La Jolla)"),
         EventPosition(event='ED_LA_JOLLA_begins', x=230, y=490, label="Being Treated in ED (La Jolla)", resource='ED_LA_JOLLA'),
 
-        EventPosition(event='BOARD_LA_JOLLA_wait_begins', x=230, y=410, label="Waiting for Boarding (La Jolla)"),
-        EventPosition(event='BOARD_LA_JOLLA_begins', x=230, y=350, label="Boarded in ED (La Jolla)", resource='BOARDED_LA_JOLLA'),
+        EventPosition(event='BOARDED_LA_JOLLA_wait_begins', x=230, y=410, label="Waiting for Boarding (La Jolla)"),
+        EventPosition(event='BOARDED_LA_JOLLA_begins', x=230, y=350, label="Boarded in ED (La Jolla)", resource='BOARDED_LA_JOLLA'),
 
         EventPosition(event='ICU_LA_JOLLA_wait_begins', x=230, y=280, label="Waiting for ICU (La Jolla)"),
         EventPosition(event='ICU_LA_JOLLA_begins', x=230, y=210, label="Being Treated in ICU (La Jolla)", resource='ICU_LA_JOLLA'),
@@ -257,8 +257,8 @@ def _(EventPosition, create_event_position_df):
         EventPosition(event='ED_HILLCREST_wait_begins', x=495, y=600, label="Waiting for ED (Hillcrest)"),
         EventPosition(event='ED_HILLCREST_begins', x=495, y=490, label="Being Treated in ED (Hillcrest)", resource='ED_HILLCREST'),
 
-        EventPosition(event='BOARD_HILLCREST_wait_begins', x=495, y=410, label="Waiting for Boarding (Hillcrest)"),
-        EventPosition(event='BOARD_HILLCREST_begins', x=495, y=350, label="Boarded in ED (Hillcrest)", resource='BOARDED_HILLCREST'),
+        EventPosition(event='BOARDED_HILLCREST_wait_begins', x=495, y=410, label="Waiting for Boarding (Hillcrest)"),
+        EventPosition(event='BOARDED_HILLCREST_begins', x=495, y=350, label="Boarded in ED (Hillcrest)", resource='BOARDED_HILLCREST'),
 
         EventPosition(event='ICU_HILLCREST_wait_begins', x=495, y=280, label="Waiting for ICU (Hillcrest)"),
         EventPosition(event='ICU_HILLCREST_begins', x=495, y=210, label="Being Treated in ICU (Hillcrest)", resource='ICU_HILLCREST'),
@@ -271,8 +271,8 @@ def _(EventPosition, create_event_position_df):
         EventPosition(event='ED_EAST_CAMPUS_wait_begins', x=740, y=600, label="Waiting for ED (East)"),
         EventPosition(event='ED_EAST_CAMPUS_begins', x=740, y=490, label="Being Treated in ED (East)", resource='ED_EAST_CAMPUS'),
 
-        EventPosition(event='BOARD_EAST_CAMPUS_wait_begins', x=740, y=410, label="Waiting for Boarding (East)"),
-        EventPosition(event='BOARD_EAST_CAMPUS_begins', x=740, y=350, label="Boarded in ED (East)", resource='BOARDED_EAST_CAMPUS'),
+        EventPosition(event='BOARDED_EAST_CAMPUS_wait_begins', x=740, y=410, label="Waiting for Boarding (East)"),
+        EventPosition(event='BOARDED_EAST_CAMPUS_begins', x=740, y=350, label="Boarded in ED (East)", resource='BOARDED_EAST_CAMPUS'),
 
         EventPosition(event='ICU_EAST_CAMPUS_wait_begins', x=740, y=280, label="Waiting for ICU (East)"),
         EventPosition(event='ICU_EAST_CAMPUS_begins', x=740, y=210, label="Being Treated in ICU (East)", resource='ICU_EAST_CAMPUS'),
@@ -293,7 +293,7 @@ def _():
 
 @app.cell
 def _(simulation_log):
-    single_run_event_log_df = simulation_log[simulation_log['run_number'] == 5]
+    single_run_event_log_df = simulation_log[simulation_log['run_number'] == 3]
     single_run_event_log_df
     return (single_run_event_log_df,)
 
@@ -318,7 +318,7 @@ def _(
     g,
     single_run_event_log_df,
 ):
-    animate_activity_log(
+    fig = animate_activity_log(
             # Pass in our filtered event log
             event_log=single_run_event_log_df,
             # Pass in our event position dataframe
@@ -380,11 +380,18 @@ def _(
             background_image_opacity=1,
             resource_opacity= 0,
         )
+    return (fig,)
+
+
+@app.cell
+def _(fig):
+    fig
     return
 
 
 @app.cell
 def _():
+    # fig.write_html("../../results/sim_animation.html", include_plotlyjs='cdn')
     return
 
 
