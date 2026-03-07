@@ -11,7 +11,7 @@
 
 import marimo
 
-__generated_with = "0.19.2"
+__generated_with = "0.20.4"
 app = marimo.App(width="medium")
 
 
@@ -42,8 +42,14 @@ def _():
 
 @app.cell
 def _(pd):
-    simulation_log = pd.read_csv('../../data/simulation_logs/LJ_combined_df_all_thresholds+baseline.csv')
+    simulation_log = pd.read_csv('../../results/simulation_logs/LJ_combined_df_all_thresholds+baseline.csv')
     return (simulation_log,)
+
+
+@app.cell
+def _(simulation_log):
+    simulation_log
+    return
 
 
 @app.cell
@@ -200,6 +206,7 @@ def _(VidigiStore, g):
 
         def get_resource(self, state_name):
             return self.resources.get(state_name, None)
+
     return
 
 
@@ -230,7 +237,7 @@ def _(EventPosition, create_event_position_df):
 
         # ARRIVAL
         EventPosition(event='arrival', x=50, y=670, label="Arrival"),
-    
+
         # LA JOLLA
         EventPosition(event='ED_LA_JOLLA_wait_begins', x=230, y=600, label="Waiting for ED (La Jolla)"),
         EventPosition(event='ED_LA_JOLLA_begins', x=230, y=490, label="Being Treated in ED (La Jolla)", resource='ED_LA_JOLLA'),
@@ -244,7 +251,7 @@ def _(EventPosition, create_event_position_df):
         EventPosition(event='FLOOR_LA_JOLLA_wait_begins', x=230, y=150, label="Waiting for Floor (La Jolla)"),
         EventPosition(event='FLOOR_LA_JOLLA_begins', x=230, y=50, label="Being Treated on Floor (La Jolla)", resource='FLOOR_LA_JOLLA'),
 
-   
+
 
         # HILLCREST
         EventPosition(event='ED_HILLCREST_wait_begins', x=495, y=600, label="Waiting for ED (Hillcrest)"),
@@ -297,7 +304,7 @@ def _():
     from PIL import Image
 
     BASE_DIR = Path(__file__).resolve().parent
-    bg_path = BASE_DIR / "bg_img.png"
+    bg_path = BASE_DIR / "../../assets/sim_v2_bg_img.png"
 
     bg_img = Image.open(bg_path)
     return (bg_img,)
@@ -344,7 +351,7 @@ def _(
             gap_between_queue_rows= 5,
             gap_between_resource_rows=5,
 
-   
+
 
             # How tall, in pixels, should the plotly plot be?
             plotly_height=900,
@@ -368,7 +375,7 @@ def _(
             simulation_time_unit='hours',
             # display our Label column from our event_position_df to identify the position of each icon
             display_stage_labels=False, 
-        
+
             add_background_image= bg_img, 
             background_image_opacity=1,
             resource_opacity= 0,
