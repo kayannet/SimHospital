@@ -65,16 +65,22 @@ The MIMIC-ED folder should be placed outside the project directory so that the t
 ---
 
 <h2 style="color:#4F81BD;">Notebook Overview</h2>
+<h3 style="color:#4F81BD;">From Quarter 2</h3>
+
 
 | File | Language | Description |
 |------|----------|-------------|
-| [ucsd_health_simulation.html](https://kayannet.github.io/SimHospital/ucsd_health_simulation.html) | Python | DES file with UCSD health data, modeled using multiple arrival rates in order to infer proper resource capacities |
-| [mimic_simulation.py](src/simulation/mimic_simulation.py) | Python | Multi-hospital model with MIMIC data, synthesized 3 different hospitals (to resemble UCSD's system) and experimented with dynamic routing based on whether or not the patient is marked as high acuity |
+| [create_sim_animation.py](src/simulation/create_sim_animation.py) | Python | Animates a simulation run using Vidigi.|
+| [simulation_with_predictor.py](src/simulation/simulation_with_predictor.py) | Python | Runs the DES with the LOS predictor for transfer decisions. |
+| [los_predictor.py](src/simulation/los_predictor.py) | Python | Code that trains and defines the LOS quantile regression predictor. Model stored in `src/models/los_quantile_models.pkl`|
+| [ucsd_health_simulation_v2.py](src/simulation/ucsd_health_simulation_v2.py) | Python | Multi-campus DES including boarding as a fourth care tier. |
+| [ucsd_health_simulation.html](https://kayannet.github.io/SimHospital/ucsd_health_simulation.html) | Python | DES simulation output showing multiple arrival rates and resource capacities. |
+| [mimic_simulation.py](src/simulation/mimic_simulation.py) | Python | Multi-hospital simulation with MIMIC data, synthesized 3 different hospitals (to resemble UCSD's system) and experimented with dynamic routing based on whether or not the patient is marked as high acuity |
 | [ucsd_health_eda.html](https://kayannet.github.io/SimHospital/ucsd_health_eda.html) | Python | Exploratory data analysis of UCSD Health data, includes aggregates and tables (no PHI)|
 
 
 
-From Quarter 1:
+<h3 style="color:#4F81BD;">From Quarter 1</h3>
 | File | Language | Description |
 |----------|-------------|-------------|
 | [01_clean_mimic_ed.ipynb](src/notebooks/mimic_eda/01_clean_mimic_ed.ipynb) | Python | Loads the raw MIMIC-IV ED extract, inspects the schema, and produces a cleaned encounter-level table (`mimicel_clean.csv`) with one row per ED stay and standardized arrival/triage/depart timestamps. This dataset is the basis for estimating arrival rates, door-to-triage times, and length-of-stay distributions for the baseline DES model. |
