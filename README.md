@@ -54,7 +54,9 @@ The MIMIC-ED folder should be placed outside the project directory so that the t
   │
   |
   ├── results                  <-- Outputs (plots, tables, metrics)
-  |   └── simulation_logs               
+  |   ├── from_qtr_1   
+  |   └── simulation_logs
+  |                  
   |
   |
   ├── docs                     <-- Documents (html outputs of python scripts, old readme.md)   
