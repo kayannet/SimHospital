@@ -1,4 +1,4 @@
-<h1 style="text-align:center; color:#4F81BD;">🏥 SimHospital Project 2: Migrating to UCSD Health Data</h1>
+<h1 style="text-align:center; color:#4F81BD;">🏥 Multi-Facility Patient Flow Optimization: A Simulation Approach</h1>
 
 This project represents **Project 2** of *SimHospital*, a multi-stage initiative to develop data-driven tools for hospital operational planning and patient flow optimization using **Discrete-Event Simulation (DES)**.
 
