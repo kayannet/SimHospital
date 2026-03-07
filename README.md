@@ -5,6 +5,20 @@ This project represents **Project 2** of *SimHospital*, a multi-stage initiative
 This project began using MIMIC to build the skeleton of our hospital simulation (Project 1), where we modeled patient flow inside one hospital. We are now able to switch to UCSD Health data to model a multi-hospital system.
 
 ---
+<h2 style="color:#4F81BD;">Problem Statement</h2>
+
+Emergency departments frequently experience **boarding**, where admitted patients remain in the ED while waiting for an inpatient bed. Boarding contributes to longer wait times, reduced quality of care, and increased patient mortality.
+
+In large multi-hospital systems, capacity shortages at one hospital can propagate across the entire network through patient transfers and shared resources. However, it is difficult to evaluate system-wide operational policies using observational data alone.
+
+This project builds a discrete-event simulation (DES) of patient flow across three UC San Diego Health campuses (La Jolla, Hillcrest, and East Campus). The goal is to identify system bottlenecks and evaluate potential policies for reducing ED congestion and improving patient flow across the hospital network.
+
+<h2 style="color:#4F81BD;">Key Insights</h2>
+- ED congestion in the system is driven primarily by **inpatient bed shortages**, not emergency department capacity.
+- **La Jolla and East Campus operate under chronic resource pressure**, while Hillcrest has comparatively greater capacity slack.
+- **LOS-triggered early transfers can eliminate boarding congestion at the source campus.**
+- However, transfers can **shift congestion to receiving hospitals**, particularly when small ICUs are involved.
+- The most effective policy is **selective transfer of long-stay patients from La Jolla**, using moderate thresholds (8–12 hours) to avoid destabilizing receiving campuses.
 
 <h2 style="color:#4F81BD;">Data Access</h2>
 Due to HIPAA restrictions, the UCSD Health data used in this project cannot be shared. Only aggregated results, tables, and simulation outputs are included in this repository.
