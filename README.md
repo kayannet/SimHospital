@@ -76,9 +76,9 @@ The MIMIC-ED folder should be placed outside the project directory so that the t
 | [simulation_with_predictor.py](src/simulation/simulation_with_predictor.py) | Python | Runs the DES with the LOS predictor for transfer decisions. |
 | [los_predictor.py](src/simulation/los_predictor.py) | Python | Code that trains and defines the LOS quantile regression predictor. Model stored in `src/models/los_quantile_models.pkl`|
 | [ucsd_health_simulation_v2.py](src/simulation/ucsd_health_simulation_v2.py) | Python | Multi-campus DES including boarding as a fourth care tier. |
-| [ucsd_health_simulation.html](https://kayannet.github.io/SimHospital/ucsd_health_simulation.html) | Python | DES simulation output showing multiple arrival rates and resource capacities. |
+| [ucsd_health_simulation.html](src/simulation/ucsd_health_simulation.py) | Python | DES simulation output showing multiple arrival rates and resource capacities. [View HTML output](https://kayannet.github.io/SimHospital/ucsd_health_simulation.html)|
 | [mimic_simulation.py](src/simulation/mimic_simulation.py) | Python | Multi-hospital simulation with MIMIC data, synthesized 3 different hospitals (to resemble UCSD's system) and experimented with dynamic routing based on whether or not the patient is marked as high acuity |
-| [ucsd_health_eda.html](https://kayannet.github.io/SimHospital/ucsd_health_eda.html) | Python | Exploratory data analysis of UCSD Health data, includes aggregates and tables (no PHI)|
+| [ucsd_health_eda.py](src/simulation/mimic_simulation.py) | Python | Exploratory data analysis of UCSD Health data, includes aggregates and tables (no PHI) [View HTML output](https://kayannet.github.io/SimHospital/ucsd_health_eda.html)|
 
 
 
