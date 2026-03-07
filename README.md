@@ -72,6 +72,7 @@ The MIMIC-ED folder should be placed outside the project directory so that the t
 | File | Language | Description |
 |------|----------|-------------|
 | [create_sim_animation.py](src/simulation/create_sim_animation.py) | Python | Animates a simulation run using Vidigi.|
+| [sim_results_analysis.py](src/simulation/sim_results_analysis.py) | Python | Processes raw simulation logs and generates all visualizations, metrics, and analyses used in the report. |
 | [simulation_with_predictor.py](src/simulation/simulation_with_predictor.py) | Python | Runs the DES with the LOS predictor for transfer decisions. |
 | [los_predictor.py](src/simulation/los_predictor.py) | Python | Code that trains and defines the LOS quantile regression predictor. Model stored in `src/models/los_quantile_models.pkl`|
 | [ucsd_health_simulation_v2.py](src/simulation/ucsd_health_simulation_v2.py) | Python | Multi-campus DES including boarding as a fourth care tier. |
