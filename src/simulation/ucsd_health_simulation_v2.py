@@ -14,7 +14,7 @@
 
 import marimo
 
-__generated_with = "0.19.7"
+__generated_with = "0.19.2"
 app = marimo.App(width="medium")
 
 
@@ -336,7 +336,6 @@ def _(VidigiStore):
                 })
 
             return snapshot
-
     return (Hospital,)
 
 
@@ -691,7 +690,6 @@ def _(Model, pd):
             self.all_event_logs_df = pd.concat([logger.to_dataframe() for logger in self.all_event_logs])
             self.all_event_logs_df.sort_values(by=["time", "entity_id"], inplace=True)
             self.all_event_logs_df.reset_index(drop=True, inplace=True)
-
     return
 
 

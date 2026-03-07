@@ -1,19 +1,21 @@
 # /// script
 # requires-python = ">=3.10"
 # dependencies = [
-#     "ibis-framework[duckdb]==11.0.0",
+#     "ibis-framework[duckdb]==12.0.0",
 #     "marimo>=0.19.2",
+#     "matplotlib==3.10.8",
 #     "numpy==2.2.6",
 #     "pandas==2.3.3",
-#     "sim-tools==1.0.1",
+#     "pillow==12.1.1",
+#     "sim-tools==1.0.3",
 #     "simpy==4.1.1",
-#     "vidigi==1.1.1",
+#     "vidigi==1.2.2",
 # ]
 # ///
 
 import marimo
 
-__generated_with = "0.19.8"
+__generated_with = "0.19.2"
 app = marimo.App(width="medium")
 
 
@@ -56,7 +58,7 @@ def _():
 
 @app.cell
 def _(pd):
-    activities_df = pd.read_csv('../../MIMIC_ED/processed/all_transfers_df.csv')
+    activities_df = pd.read_csv('../../../MIMIC_ED/processed/all_transfers_df.csv')
 
     activities_df['hadm_id'].fillna(0, inplace=True)
 
@@ -684,7 +686,6 @@ def _(EventLogger, Exponential, VidigiStore, pd, random, simpy):
             )
             # Run the model for the duration specified in g class
             self.env.run(until=g.sim_duration)
-
     return (Model,)
 
 
@@ -760,7 +761,6 @@ def _(Model, np, pd):
             self.all_event_logs_df = pd.concat([logger.to_dataframe() for logger in self.all_event_logs])
             self.all_event_logs_df.sort_values(by=["time", "entity_id"], inplace=True)
             self.all_event_logs_df.reset_index(drop=True, inplace=True)
-
     return (Trial,)
 
 

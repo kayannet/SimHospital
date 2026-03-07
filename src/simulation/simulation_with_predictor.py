@@ -3,10 +3,10 @@
 #     "joblib==1.5.3",
 #     "marimo",
 #     "matplotlib==3.10.8",
-#     "numpy==2.4.2",
+#     "numpy==2.2.6",
 #     "pandas==2.3.3",
 #     "plotly==6.6.0",
-#     "scipy==1.17.1",
+#     "scipy==1.15.3",
 #     "sim-tools==1.0.3",
 #     "simpy==4.1.1",
 #     "vidigi==1.2.2",
@@ -16,7 +16,7 @@
 
 import marimo
 
-__generated_with = "0.19.7"
+__generated_with = "0.19.2"
 app = marimo.App(width="medium")
 
 
@@ -79,15 +79,15 @@ def _():
 
 
 @app.cell
-def _(adt_df, training_df):
-    print(training_df.columns.tolist())
-    print(adt_df.columns.tolist())
+def _():
+    # print(training_df.columns.tolist())
+    # print(adt_df.columns.tolist())
     return
 
 
 @app.cell
 def _(pickle):
-    with open("../model/los_quantile_models.pkl", "rb") as f:
+    with open("../models/los_quantile_models.pkl", "rb") as f:
         models = pickle.load(f)
     return (models,)
 
@@ -106,7 +106,7 @@ def _(json, pd):
 
     with open('../data/states_fitted_distribution_v2.json', 'r') as fff:
         fitted_distribution = json.load(fff)
-    return adt_df, fitted_distribution, loc_trans_prob_df, trajectory_library
+    return fitted_distribution, loc_trans_prob_df, trajectory_library
 
 
 @app.cell
@@ -258,7 +258,7 @@ def _(trajectory_library):
 
         if campus is not None:
             trajectory_library_by_campus[campus][enc_id] = traj
-    return (trajectory_library_by_campus,)
+    return
 
 
 @app.cell
@@ -293,7 +293,7 @@ def _(loc_trans_prob_df):
         # calculated by taking the max utilized when cap was set to 9999
 
         UNITS = ["ED", "FLOOR", "ICU", "BOARDED"]
-        HOSPITALS = ["EAST_CAMPUS", "HILLCREST", "LA_JOLLA"]
+        HOSPITALS = ["EASTa_CAMPUS", "HILLCREST", "LA_JOLLA"]
 
         STATES = [
                     "ED_EAST_CAMPUS"
@@ -1150,12 +1150,12 @@ def _(Model, g, pd):
             self.all_event_logs_df = pd.concat([logger.to_dataframe() for logger in self.all_event_logs])
             self.all_event_logs_df.sort_values(by=["time", "entity_id"], inplace=True)
             self.all_event_logs_df.reset_index(drop=True, inplace=True)
-    return (Trial,)
+    return
 
 
 @app.cell
-def _(Trial, trajectory_library_by_campus):
-    my_trial = Trial(trajectory_library_by_campus)
+def _():
+    # my_trial = Trial(trajectory_library_by_campus)
 
     # my_trial.run_trial() # run to repopulate data, otherwise, just load old logs
     return
