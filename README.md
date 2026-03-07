@@ -148,4 +148,4 @@ jupyter notebook src/notebooks/01_clean_mimic_ed.ipynb
 </details>
 
 
-<p style="text-align:center; font-style:italic;"> Last updated February 2026 · SimHospital (Project 2)</p>
+<p style="text-align:center; font-style:italic;"> Last updated March 2026 · SimHospital (Project 2)</p>
