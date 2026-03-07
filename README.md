@@ -65,7 +65,7 @@ The MIMIC-ED folder should be placed outside the project directory so that the t
 ```
 ---
 
-<h2 style="color:#4F81BD;">Notebook Overview</h2>
+<h2 style="color:#4F81BD;">Scripts Overview</h2>
 
 ### From Quarter 2
 
