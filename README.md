@@ -48,14 +48,15 @@ The MIMIC-ED folder should be placed outside the project directory so that the t
   │
   ├── src                      <-- Main source folder
   │   ├── notebooks            <-- Jupyter notebooks (EDA, visualizations, modeling)
-  │   ├── simulation           <-- Python files with simulation builds
+  │   ├── simulation           <-- Python files with simulation builds and analysis
   │   └── r_script             <-- R scripts (DES, simulation, modeling)
   │
   |
   ├── results                  <-- Outputs (plots, tables, metrics)
+  |   └── simulation_logs               
   |
   |
-  ├── docs                     <-- Documents (ex. old readme.md versions)   
+  ├── docs                     <-- Documents (old readme.md, html notebooks)   
   |
   ├── requirements.txt     
   └── README.md
