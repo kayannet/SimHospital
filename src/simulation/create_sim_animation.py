@@ -153,7 +153,7 @@ def _(simpy):
         # -------------------------
         # Simulation controls
         # -------------------------
-        sim_duration = 4320 #6 months #8760 #one year in hours
+        sim_duration = 1000 #6 months #8760 #one year in hours
         number_of_runs = 6
         random_number_set = 42
         audit_interval = 1
@@ -329,7 +329,7 @@ def _(
             scenario = g(),
             # How long should the animation last? We can pass in any value here - but I've chosen to
             # make it last as long as our originally defined simulation duration
-            limit_duration= 100,#g.sim_duration,
+            limit_duration= g.sim_duration,
             # Turn on logging messages
             debug_mode=True,
             # Turn on axis units - this can help with honing your event_position_df iteratively
@@ -372,7 +372,7 @@ def _(
             step_snapshot_max=20,
             step_snapshot_limit_gauges = True, 
             gauge_max_override = 20, 
-        
+
             # What should the time display units be underneath the simulation?
             time_display_units="simulation_day_clock_ampm",
             simulation_time_unit='hours',
@@ -398,8 +398,13 @@ def _(fig):
 
 
 @app.cell
+def _(fig):
+    fig.write_html("../../results/three_months_sim_animation.html", include_plotlyjs='cdn')
+    return
+
+
+@app.cell
 def _():
-    # fig.write_html("../../results/sim_animation.html", include_plotlyjs='cdn')
     return
 
 
