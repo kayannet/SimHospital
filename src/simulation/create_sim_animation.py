@@ -1,6 +1,7 @@
 # /// script
 # requires-python = ">=3.10"
 # dependencies = [
+#     "imageio==2.37.2",
 #     "marimo>=0.20.4",
 #     "pandas==2.3.3",
 #     "pillow==12.1.1",
@@ -239,7 +240,7 @@ def _(EventPosition, create_event_position_df):
         EventPosition(event='arrival', x=50, y=670, label="Arrival"),
 
         # LA JOLLA
-        EventPosition(event='ED_LA_JOLLA_wait_begins', x=230, y=600, label="Waiting for ED (La Jolla)"),
+        EventPosition(event='ED_LA_JOLLA_wait_begins', x=230, y=570, label="Waiting for ED (La Jolla)"),
         EventPosition(event='ED_LA_JOLLA_begins', x=230, y=490, label="Being Treated in ED (La Jolla)", resource='ED_LA_JOLLA'),
 
         EventPosition(event='BOARDED_LA_JOLLA_wait_begins', x=230, y=410, label="Waiting for Boarding (La Jolla)"),
@@ -254,7 +255,7 @@ def _(EventPosition, create_event_position_df):
 
 
         # HILLCREST
-        EventPosition(event='ED_HILLCREST_wait_begins', x=495, y=600, label="Waiting for ED (Hillcrest)"),
+        EventPosition(event='ED_HILLCREST_wait_begins', x=495, y=570, label="Waiting for ED (Hillcrest)"),
         EventPosition(event='ED_HILLCREST_begins', x=495, y=490, label="Being Treated in ED (Hillcrest)", resource='ED_HILLCREST'),
 
         EventPosition(event='BOARDED_HILLCREST_wait_begins', x=495, y=410, label="Waiting for Boarding (Hillcrest)"),
@@ -268,7 +269,7 @@ def _(EventPosition, create_event_position_df):
 
 
          # EAST CAMPUS
-        EventPosition(event='ED_EAST_CAMPUS_wait_begins', x=740, y=600, label="Waiting for ED (East)"),
+        EventPosition(event='ED_EAST_CAMPUS_wait_begins', x=740, y=570, label="Waiting for ED (East)"),
         EventPosition(event='ED_EAST_CAMPUS_begins', x=740, y=490, label="Being Treated in ED (East)", resource='ED_EAST_CAMPUS'),
 
         EventPosition(event='BOARDED_EAST_CAMPUS_wait_begins', x=740, y=410, label="Waiting for Boarding (East)"),
@@ -352,7 +353,6 @@ def _(
             gap_between_resource_rows=5,
 
 
-
             # How tall, in pixels, should the plotly plot be?
             plotly_height=900,
             plotly_width=1000,
@@ -364,12 +364,15 @@ def _(
             frame_transition_duration=1000,
 
             # How long should a queue be before it starts wrapping vertically?
-            wrap_queues_at=15,
-            wrap_resources_at=15,
+            wrap_queues_at=17,
+            wrap_resources_at=17,
 
             # What are the maximum numbers of entities that should be displayed in any queueing steps
             # before displaying additional entities as a text string like '+ 37 more'
-            step_snapshot_max=125,
+            step_snapshot_max=20,
+            step_snapshot_limit_gauges = True, 
+            gauge_max_override = 20, 
+        
             # What should the time display units be underneath the simulation?
             time_display_units="simulation_day_clock_ampm",
             simulation_time_unit='hours',
@@ -381,6 +384,11 @@ def _(
             resource_opacity= 0,
         )
     return (fig,)
+
+
+@app.cell
+def _():
+    return
 
 
 @app.cell
