@@ -4,6 +4,8 @@ This project represents **Project 2** of *SimHospital*, a multi-stage initiative
 
 This project began using MIMIC to build the skeleton of our hospital simulation (Project 1), where we modeled patient flow inside one hospital. We are now able to switch to UCSD Health data to model a multi-hospital system.
 
+### Simulation Animation
+![Simulation Animation](results/simulation_animation.gif)
 <ul>
   <li>
     <a href="docs/DSC_Capstone_Quarter_2_Report.pdf">Full Project Report</a> — methodology, results, discussion.
